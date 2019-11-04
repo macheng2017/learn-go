@@ -24,7 +24,7 @@ func main() {
 	fmt.Printf("%T %v \n", r, r)
 	//output:
 	//mock.Retriever {this is fack google.com}
-	//real.Retriever { 1m0s}
+	//*real.Retriever &{Mozilla/5.0 1m0s}
 
 	//fmt.Println(download(mock.Retriever{"this is fack google.com"}))
 	//fmt.Println(download(real2.Retriever{}))
