@@ -15,5 +15,12 @@ func main() {
 	fmt.Println(q.IsEmpty())
 	fmt.Println(q.Dequeue())
 	fmt.Println(q.IsEmpty())
-
+	q.Enqueue("abc")
+	fmt.Println(q.Dequeue())
+	//1
+	//2
+	//false
+	//3
+	//true
+	//abc
 }
