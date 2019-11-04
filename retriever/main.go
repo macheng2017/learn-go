@@ -18,16 +18,26 @@ func download(r Retriever) string {
 func main() {
 	var r Retriever
 	r = mock.Retriever{"this is fack google.com"}
-	fmt.Printf("%T %v \n", r, r)
+	inspect(r)
 	r = &real2.Retriever{UserAgent: "Mozilla/5.0", TimeOut: time.Minute}
+	inspect(r)
 
-	fmt.Printf("%T %v \n", r, r)
 	//output:
-	//mock.Retriever {this is fack google.com}
-	//*real.Retriever &{Mozilla/5.0 1m0s}
+	//	mock.Retriever {this is fack google.com}
+	//Contents: this is fack google.com
+	//	*real.Retriever &{Mozilla/5.0 1m0s}
+	//UserAgent: Mozilla/5.0
 
-	//fmt.Println(download(mock.Retriever{"this is fack google.com"}))
-	//fmt.Println(download(real2.Retriever{}))
+}
+
+func inspect(r Retriever) {
+	fmt.Printf("%T %v \n", r, r)
+	switch v := r.(type) {
+	case mock.Retriever:
+		fmt.Println("Contents:", v.Contents)
+	case *real2.Retriever:
+		fmt.Println("UserAgent:", v.UserAgent)
+	}
 }
 
 //直接实现接口然后调用接口，使用者定义接口这个步骤会不会是多余的，存在肯定是有意义的，意义是什么？
