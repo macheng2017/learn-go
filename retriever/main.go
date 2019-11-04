@@ -22,11 +22,18 @@ func main() {
 	r = &real2.Retriever{UserAgent: "Mozilla/5.0", TimeOut: time.Minute}
 	inspect(r)
 
-	//output:
-	//	mock.Retriever {this is fack google.com}
-	//Contents: this is fack google.com
-	//	*real.Retriever &{Mozilla/5.0 1m0s}
-	//UserAgent: Mozilla/5.0
+	// Type assertion
+	realRetriever := r.(*real2.Retriever)
+	fmt.Println(realRetriever.TimeOut)
+
+	//mockRetriever := r.(mock.Retriever)
+	//fmt.Println(mockRetriever.Contents)
+
+	if mockRetriever, ok := r.(mock.Retriever); ok {
+		fmt.Println(mockRetriever.Contents)
+	} else {
+		fmt.Println("not a mock retriever")
+	}
 
 }
 
