@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"learngo/retriever/mock"
 	real2 "learngo/retriever/real"
+	"time"
 )
 
 type Retriever interface {
@@ -14,9 +16,20 @@ func download(r Retriever) string {
 }
 
 func main() {
-	// 当前程序不知道Retriever是什么东西,单词故意拼错的
+	var r Retriever
+	r = mock.Retriever{"this is fack google.com"}
+	fmt.Printf("%T %v \n", r, r)
+	r = real2.Retriever{UserAgent: "Mozilla/5.0", TimeOut: time.Minute}
+	//# learngo/retriever
+	//./main.go:22:4: cannot use real.Retriever literal (type real.Retriever) as type Retriever in assignment:
+	//real.Retriever does not implement Retriever (Get method has pointer receiver)
+	fmt.Printf("%T %v \n", r, r)
+	//output:
+	//mock.Retriever {this is fack google.com}
+	//real.Retriever { 1m0s}
+
 	//fmt.Println(download(mock.Retriever{"this is fack google.com"}))
-	fmt.Println(download(real2.Retriever{}))
+	//fmt.Println(download(real2.Retriever{}))
 }
 
 //直接实现接口然后调用接口，使用者定义接口这个步骤会不会是多余的，存在肯定是有意义的，意义是什么？
