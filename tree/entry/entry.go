@@ -21,6 +21,10 @@ func (myNode *myTreeNode) postOrder() {
 	myNode.node.Print()
 }
 
+//postOrder()方法的接收者是一个指针接收者
+//
+//基于指针类型的方法，需要先声明一个指针变量，接收指针类型的值，编译器才能拿到具体的地址，调用其方法。
+
 func main() {
 	root := tree.Node{}
 
