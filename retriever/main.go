@@ -19,10 +19,8 @@ func main() {
 	var r Retriever
 	r = mock.Retriever{"this is fack google.com"}
 	fmt.Printf("%T %v \n", r, r)
-	r = real2.Retriever{UserAgent: "Mozilla/5.0", TimeOut: time.Minute}
-	//# learngo/retriever
-	//./main.go:22:4: cannot use real.Retriever literal (type real.Retriever) as type Retriever in assignment:
-	//real.Retriever does not implement Retriever (Get method has pointer receiver)
+	r = &real2.Retriever{UserAgent: "Mozilla/5.0", TimeOut: time.Minute}
+
 	fmt.Printf("%T %v \n", r, r)
 	//output:
 	//mock.Retriever {this is fack google.com}
