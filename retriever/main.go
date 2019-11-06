@@ -74,14 +74,28 @@ func main() {
 }
 
 func inspect(r Retriever) {
-	fmt.Printf("%T %v \n", r, r)
+	fmt.Println("Inspecting ", r)
+	fmt.Printf(" > %T %v \n", r, r)
+	fmt.Print(" > Type switch")
 	switch v := r.(type) {
 	case *mock.Retriever:
 		fmt.Println("Contents:", v.Contents)
 	case *real2.Retriever:
 		fmt.Println("UserAgent:", v.UserAgent)
 	}
+	fmt.Println()
 }
+
+/*
+output:
+
+Inspecting  Retriever: {Contents=this is fack google.com}
+> *mock.Retriever Retriever: {Contents=this is fack google.com}
+> Type switchContents: this is fack google.com
+
+Inspecting  &{Mozilla/5.0 1m0s}
+> *real.Retriever &{Mozilla/5.0 1m0s}
+> Type switchUserAgent: Mozilla/5.0*/
 
 //直接实现接口然后调用接口，使用者定义接口这个步骤会不会是多余的，存在肯定是有意义的，意义是什么？
 
