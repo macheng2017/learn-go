@@ -15,9 +15,42 @@ func download(r Retriever) string {
 	return r.Get("http://www.baidu.com")
 }
 
+// 演示组合的用法
+// 定义一个接口,(接口由使用者定义)
+type Poster interface {
+	Post(url string, form map[string]string) string
+}
+
+const url = "http://www.baidu.com"
+
+// 使用一个接口
+func post(poster Poster) {
+
+	poster.Post(url, map[string]string{
+		"name":   "ccmouse",
+		"course": "golang",
+	})
+}
+
+// 组合接口
+type RetrieverPoster interface {
+	Retriever
+	Poster
+	// other method
+}
+
+// 使用组合后的接口
+func session(rp RetrieverPoster) string {
+	rp.Post(url, map[string]string{
+		"contents": "another faked baidu.com",
+	})
+	return rp.Get(url)
+}
+
 func main() {
 	var r Retriever
-	r = mock.Retriever{"this is fack google.com"}
+	retriever := mock.Retriever{"this is fack google.com"}
+	r = &retriever
 	inspect(r)
 	r = &real2.Retriever{UserAgent: "Mozilla/5.0", TimeOut: time.Minute}
 	inspect(r)
@@ -26,10 +59,13 @@ func main() {
 	realRetriever := r.(*real2.Retriever)
 	fmt.Println(realRetriever.TimeOut)
 
+	fmt.Println("Try a session")
+	fmt.Println(session(&retriever))
+
 	//mockRetriever := r.(mock.Retriever)
 	//fmt.Println(mockRetriever.Contents)
 
-	if mockRetriever, ok := r.(mock.Retriever); ok {
+	if mockRetriever, ok := r.(*mock.Retriever); ok {
 		fmt.Println(mockRetriever.Contents)
 	} else {
 		fmt.Println("not a mock retriever")
@@ -40,7 +76,7 @@ func main() {
 func inspect(r Retriever) {
 	fmt.Printf("%T %v \n", r, r)
 	switch v := r.(type) {
-	case mock.Retriever:
+	case *mock.Retriever:
 		fmt.Println("Contents:", v.Contents)
 	case *real2.Retriever:
 		fmt.Println("UserAgent:", v.UserAgent)
