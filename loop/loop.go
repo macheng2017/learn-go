@@ -3,8 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func ConventToBin(n int) string {
@@ -21,6 +23,10 @@ func printFile(filename string) {
 	if err != nil {
 		panic(err)
 	}
+	printFileContents(file)
+}
+
+func printFileContents(file io.Reader) {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		fmt.Println(scanner.Text())
@@ -30,5 +36,12 @@ func printFile(filename string) {
 func main() {
 	fmt.Println(ConventToBin(13))
 	printFile("abc.txt")
+	s := `sdfsd
+				sdfsd
+
+sdfds
+
+`
+	printFileContents(strings.NewReader(s))
 
 }
