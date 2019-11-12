@@ -23,7 +23,8 @@ func fibonacci() inGen {
 // 定义一个类型
 type inGen func() int
 
-// 为类型实现接口,方便以后调用 f.Read()
+// 为类型实现接口,方便以后调用
+// 这里实现的其实是,官方定义的io.Reader的接口,也就是这个接口定义在官方那(按照io.Reader的定义标准在这里实现),实现在这儿
 func (g inGen) Read(p []byte) (n int, err error) {
 	next := g()
 	if next > 10000 {

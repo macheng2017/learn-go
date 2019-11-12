@@ -1,12 +1,36 @@
 package main
 
-import "fmt"
+import (
+	"bufio"
+	"fmt"
+	"io"
+	"strings"
+)
 
-func fibonacci1() func() int {
+func fibonacci1() inGen1 {
 	a, b := 0, 1
 	return func() int {
 		a, b = b, a+b
 		return a
+	}
+}
+
+type inGen1 func() int
+
+// 使用这种写法的好处就是,可以一次性的获取一个数列输出流,不用再生成一个输出一个数字
+func (g inGen1) Read(p []byte) (n int, err error) {
+	next := g()
+	if next > 10000 {
+		return 0, io.EOF
+	}
+	s := fmt.Sprintf("%d\n", next)
+	return strings.NewReader(s).Read(p)
+}
+
+func printFileContents1(file io.Reader) {
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		fmt.Println(scanner.Text())
 	}
 }
 
@@ -17,12 +41,13 @@ func main() {
 	//fmt.Println(fibonacci1()())
 	//fmt.Println(fibonacci1()())
 	//fmt.Println(fibonacci1()())
-	fmt.Println(f())
-	fmt.Println(f())
-	fmt.Println(f())
-	fmt.Println(f())
-	fmt.Println(f())
-	fmt.Println(f())
+	//fmt.Println(f())
+	//fmt.Println(f())
+	//fmt.Println(f())
+	//fmt.Println(f())
+	//fmt.Println(f())
+	//fmt.Println(f())
+	printFileContents1(f)
 
 	// 这里有个问题就是,有两种调用方式 第一种就是,使用fibonacci1()()
 	//第二种就是保存到一个变量当中然后使用这个变量调用返回的函数
