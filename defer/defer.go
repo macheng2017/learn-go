@@ -10,12 +10,12 @@ import (
 // defer 是栈结构先入后出
 // defer 会在return panic之前 回到defer定义位置执行完剩余的代码
 func tryDefer() {
-	defer fmt.Println(2)
-	defer fmt.Println(1)
-	//defer deferTest()
-	fmt.Println(3)
-	panic("error")
-	fmt.Println(4)
+	for i := 0; i < 100; i++ {
+		defer fmt.Println(i)
+		if i == 30 {
+			panic("print to many")
+		}
+	}
 
 }
 
@@ -39,18 +39,45 @@ func writeFile(filename string) {
 }
 
 func main() {
-	//tryDefer()
-	writeFile("test.txt")
+	tryDefer()
+	//writeFile("test.txt")
 }
 
-// 发现一个奇怪的现象,使用panic之后 错误打印中间执行了3,1,2,而且还是随机的这些数字顺序不变但插入错误信息的位置会变动
-//anic: error
-//3
+//30
+//panic: print to many
+//29
 //
+//28
 //goroutine 1 [running]:
-//1
+//27
 //main.tryDefer()
-//2
-///Users/mac/github/go/src/learngo/defer/defer.go:12 +0x1ab
+//26
+///Users/mac/github/go/src/learngo/defer/defer.go:16 +0x111
+//25
 //main.main()
-///Users/mac/github/go/src/learngo/defer/defer.go:22 +0x20
+//24
+///Users/mac/github/go/src/learngo/defer/defer.go:42 +0x20
+//23
+//22
+//21
+//20
+//19
+//18
+//17
+//16
+//15
+//14
+//13
+//12
+//11
+//10
+//9
+//8
+//7
+//6
+//5
+//4
+//3
+//2
+//1
+//0
