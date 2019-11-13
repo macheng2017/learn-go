@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"learngo/functional/fib"
 	"os"
@@ -24,9 +25,19 @@ func deferTest() {
 }
 
 func writeFile(filename string) {
-	file, e := os.Create(filename)
+	file, e := os.OpenFile(filename, os.O_EXCL|os.O_CREATE, 0666)
 	if e != nil {
-		panic(e)
+		//panic(e)
+		fmt.Println("file already exists", e)
+		e = errors.New("this is a custom error")
+		// 是自己知道的err类型则处理,不是自己知道的panic
+		if pathError, ok := e.(*os.PathError); !ok {
+			panic(e)
+		} else {
+			fmt.Printf(" %s\n %s\n %s\n", pathError.Err, pathError.Op, pathError.Path)
+		}
+
+		return
 	}
 	defer file.Close()
 	writer := bufio.NewWriter(file)
@@ -35,12 +46,11 @@ func writeFile(filename string) {
 	for i := 0; i < 20; i++ {
 		fmt.Fprintln(writer, f())
 	}
-
 }
 
 func main() {
-	tryDefer()
-	//writeFile("test.txt")
+	//tryDefer()
+	writeFile("test.txt")
 }
 
 //30
