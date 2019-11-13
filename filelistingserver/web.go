@@ -12,14 +12,17 @@ type appHandler func(writer http.ResponseWriter, request *http.Request) error
 // 为HandleFileList 包装一层错误处理
 func errWrapper(handler appHandler) func(http.ResponseWriter, *http.Request) {
 	return func(writer http.ResponseWriter, request *http.Request) {
+
 		err := handler(writer, request)
 		if err != nil {
-
+			code := http.StatusOK
 			switch {
 			case os.IsNotExist(err):
-				http.Error(writer, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-
+				code = http.StatusNotFound
+			default:
+				code = http.StatusInternalServerError
 			}
+			http.Error(writer, http.StatusText(code), code)
 		}
 	}
 }
