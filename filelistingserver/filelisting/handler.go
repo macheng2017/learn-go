@@ -7,19 +7,20 @@ import (
 	"os"
 )
 
-var HandleFileList = func(writer http.ResponseWriter, request *http.Request) {
+var HandleFileList = func(writer http.ResponseWriter, request *http.Request) error {
 	path := request.URL.Path[len("/list/"):]
 	fmt.Printf(path)
 	file, e := os.Open(path)
 	if e != nil {
-		http.Error(writer, e.Error(), http.StatusInternalServerError)
-		return
+
+		return e
 	}
 	//fmt.Println(file)
 	defer file.Close()
 	bytes, e := ioutil.ReadAll(file)
 	if e != nil {
-		panic(e)
+		return e
 	}
 	writer.Write(bytes)
+	return nil
 }
