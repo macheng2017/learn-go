@@ -13,7 +13,8 @@ func main() {
 		fmt.Printf(path)
 		file, e := os.Open(path)
 		if e != nil {
-			panic(e)
+			http.Error(writer, e.Error(), http.StatusInternalServerError)
+			return
 		}
 		//fmt.Println(file)
 		defer file.Close()
