@@ -1,6 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"bufio"
+	"fmt"
+	"learngo/functional/fib"
+	"os"
+)
 
 // defer 是栈结构先入后出
 // defer 会在return panic之前 回到defer定义位置执行完剩余的代码
@@ -18,8 +23,24 @@ func deferTest() {
 	fmt.Println("deferTest")
 }
 
+func writeFile(filename string) {
+	file, e := os.Create(filename)
+	if e != nil {
+		panic(e)
+	}
+	defer file.Close()
+	writer := bufio.NewWriter(file)
+	defer writer.Flush()
+	f := fib.Fibonacci()
+	for i := 0; i < 20; i++ {
+		fmt.Fprintln(writer, f())
+	}
+
+}
+
 func main() {
-	tryDefer()
+	//tryDefer()
+	writeFile("test.txt")
 }
 
 // 发现一个奇怪的现象,使用panic之后 错误打印中间执行了3,1,2,而且还是随机的这些数字顺序不变但插入错误信息的位置会变动
