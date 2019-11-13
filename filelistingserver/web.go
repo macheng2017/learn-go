@@ -2,6 +2,7 @@ package main
 
 import (
 	"learngo/filelistingserver/filelisting"
+	"log"
 	"net/http"
 	"os"
 )
@@ -15,10 +16,14 @@ func errWrapper(handler appHandler) func(http.ResponseWriter, *http.Request) {
 
 		err := handler(writer, request)
 		if err != nil {
+			// 添加控制台错误打印提示
+			log.Printf("Error handling request: %s", err.Error())
 			code := http.StatusOK
 			switch {
 			case os.IsNotExist(err):
 				code = http.StatusNotFound
+			case os.IsPermission(err):
+				code = http.StatusForbidden
 			default:
 				code = http.StatusInternalServerError
 			}
