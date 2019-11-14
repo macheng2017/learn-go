@@ -1,4 +1,4 @@
-package learngo
+package test_triangle
 
 import (
 	"fmt"
@@ -13,9 +13,14 @@ var (
 
 func triangle() {
 	a, b := 3, 4
+	c := calcTriangle(a, b)
+	fmt.Println(c)
+}
+
+func calcTriangle(a int, b int) int {
 	var c int
 	c = int(math.Sqrt(float64(a*a + b*b)))
-	fmt.Println(c)
+	return c
 }
 
 func consts() {
