@@ -26,6 +26,13 @@ func errWrapper(handler appHandler) func(http.ResponseWriter, *http.Request) {
 		if err != nil {
 			// 添加控制台错误打印提示
 			log.Printf("Error handling request: %s", err.Error())
+
+			// 在这里使用刚刚定义的用户级错误信息
+			if userErr, ok := err.(userError); ok {
+				http.Error(writer, userErr.Message(), http.StatusBadRequest)
+				return
+			}
+
 			code := http.StatusOK
 			switch {
 			case os.IsNotExist(err):
@@ -39,6 +46,13 @@ func errWrapper(handler appHandler) func(http.ResponseWriter, *http.Request) {
 		}
 	}
 }
+
+// 定义一个给用户看的错误接口
+type userError interface {
+	error
+	Message() string
+}
+
 func main() {
 	// 这个时候用户再访问 localhost:8888 就会报错
 	http.HandleFunc("/", errWrapper(filelisting.HandleFileList))
