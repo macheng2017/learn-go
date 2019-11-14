@@ -30,3 +30,22 @@ func TestSubstr(t *testing.T) {
 		}
 	}
 }
+
+// 性能测试
+// 要写成BenchmarkXxx
+func BenchmarkSubstr(b *testing.B) {
+	s := "师傅的说法方法"
+	ans := 14
+	for i := 0; i < b.N; i++ {
+
+		if actual := cases(s); actual != ans {
+			b.Errorf("got %d for input %s; expected %d", actual, s, ans)
+		}
+	}
+}
+
+//goos: darwin
+//goarch: amd64
+//pkg: learngo/nonDuplicate
+//BenchmarkSubstr-12    	  464334	      2441 ns/op
+//PASS
