@@ -11,7 +11,7 @@ func tryRecover() {
 		if err, ok := r.(error); ok {
 			fmt.Println("Error occurred", err)
 		} else {
-			panic(r)
+			panic(fmt.Sprintf("I dont know what is something %v", r))
 		}
 	}()
 
@@ -19,12 +19,15 @@ func tryRecover() {
 
 	// panic 向上throw一个错误
 	//panic(errors.New("this is a error "))
-	b := 0
-	a := 5 / b
-	fmt.Println(a)
+	//b := 0
+	//a := 5 / b
+	//fmt.Println(a)
+	// 抛出一个不是error的错误
+	panic(123)
 }
 
 func main() {
 	tryRecover()
-	// Error occurred runtime error: integer divide by zero
+	//panic: 123 [recovered]
+	//panic: I dont know what is something 123
 }
