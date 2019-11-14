@@ -1,4 +1,4 @@
-package learngo
+package nonDuplicate
 
 func cases(str string) int {
 
