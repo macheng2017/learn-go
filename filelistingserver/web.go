@@ -40,7 +40,8 @@ func errWrapper(handler appHandler) func(http.ResponseWriter, *http.Request) {
 	}
 }
 func main() {
-	http.HandleFunc("/list/", errWrapper(filelisting.HandleFileList))
+	// 这个时候用户再访问 localhost:8888 就会报错
+	http.HandleFunc("/", errWrapper(filelisting.HandleFileList))
 	serve := http.ListenAndServe(":8888", nil)
 
 	if serve != nil {
