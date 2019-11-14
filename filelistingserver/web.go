@@ -14,6 +14,14 @@ type appHandler func(writer http.ResponseWriter, request *http.Request) error
 func errWrapper(handler appHandler) func(http.ResponseWriter, *http.Request) {
 	return func(writer http.ResponseWriter, request *http.Request) {
 
+		// 可以使用上一节的recover来接住这个报错信息,并处理
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("panic: %v", r)
+				http.Error(writer, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			}
+		}()
+
 		err := handler(writer, request)
 		if err != nil {
 			// 添加控制台错误打印提示
