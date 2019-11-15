@@ -1,4 +1,4 @@
-package nonDuplicate
+package main
 
 import (
 	"testing"
