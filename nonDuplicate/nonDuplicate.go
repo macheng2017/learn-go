@@ -2,12 +2,14 @@ package main
 
 import "fmt"
 
+var lastOccurred = make([]int, 0xffff)
+
 func cases(str string) int {
 
 	//lastOccurred := make(map[rune]int)
 	// 优化的原则用空间换时间
 	// 对字符型的优化方法,开一个比较大的slice
-	lastOccurred := make([]int, 0xffff)
+
 	for i := range lastOccurred {
 		lastOccurred[i] = -1
 	}
