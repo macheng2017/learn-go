@@ -35,7 +35,11 @@ func TestSubstr(t *testing.T) {
 // 要写成BenchmarkXxx
 func BenchmarkSubstr(b *testing.B) {
 	s := "师傅的说法方法"
-	ans := 14
+	// 加长字符串
+	for i := 0; i < 13; i++ {
+		s += s
+	}
+	ans := 6
 	for i := 0; i < b.N; i++ {
 
 		if actual := cases(s); actual != ans {
