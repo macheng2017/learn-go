@@ -7,15 +7,17 @@ import (
 
 // goroutine 会随着主线程结束而结束
 func main() {
-	fmt.Println("go")
-	for i := 0; i < 1000; i++ {
+	//fmt.Println("go")
+	var a [10]int
+	for i := 0; i < 10; i++ {
 		go func(i int) {
 			for {
-				fmt.Printf("Hello from goroutine %d \n", i)
+				a[i]++
 			}
 		}(i)
 	}
 	//fmt.Println("end")
 	time.Sleep(time.Millisecond)
+	fmt.Println(a)
 
 }
