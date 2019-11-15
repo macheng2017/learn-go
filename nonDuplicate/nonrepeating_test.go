@@ -10,23 +10,25 @@ func TestSubstr(t *testing.T) {
 		ans int
 	}{
 		// Normal cases
-		{"aaaabbbb", 4},
-		{"sdfdsfdsfds", 3},
+		{"aaaabbbb", 2},
+		{"abcabc", 3},
 
 		// Edge cases
 		{"", 0},
-		{"nil", -1},
+		{"nil", 3},
 		{"b", 1},
 		{"bbbbbbbbbbbbb", 1},
+		// 这个测试没问题,是我想错了,程序的目的是寻找最长不重复字符,这个字符可以从中间部分开始
 		{"abcabcabcd", 4},
 		// chinese support
-		{"是否递四方速递", 7},
-		{"师傅的说法方法", 5},
+		{"是否递四方速递", 6},
+		{"师傅的说法方法", 6},
+		{"aaaa的第三方", 5},
 	}
 
 	for _, tt := range tests {
 		if actual := cases(tt.s); actual != tt.ans {
-			t.Errorf("got %d for input %s; expected %d", actual, tt.s, tt.ans)
+			t.Errorf("expected %d got %d for input %s", tt.ans, actual, tt.s)
 		}
 	}
 }
