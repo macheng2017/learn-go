@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-var lastOccurred = make([]int, 0xffff)
+var lastOccurred = make([]int, 0xffff) //65535
 
 func cases(str string) int {
 
