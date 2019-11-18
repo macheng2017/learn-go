@@ -5,18 +5,18 @@ import (
 	"time"
 )
 
+var worker = func(id int, c chan int) {
+	// 在这里形成了闭包,修改为下面的结构改为非闭包(值传递)
+	for {
+		fmt.Printf("receive value via channel id : %d value %d\n", id, <-c)
+	}
+}
+
 func channelDemo() {
 
 	c := make(chan int)
 
-	go func(c chan int) {
-		// 在goroutine中接收数据
-		// 在这里形成了闭包,修改为下面的结构改为非闭包(值传递)
-		for {
-			n := <-c
-			fmt.Printf("receive value via channel : %d\n", n)
-		}
-	}(c)
+	go worker(0, c)
 
 	// 向channel发数据
 	c <- 1
@@ -28,8 +28,8 @@ func channelDemo() {
 
 func main() {
 	channelDemo()
-	//receive value via channel : 1
-	//receive value via channel : 2
+	//receive value via channel id : 0 value 1
+	//receive value via channel id : 0 value 2
 	//
 	//Process finished with exit code 0
 }
