@@ -26,10 +26,10 @@ var doWork = func(id int, c chan int, done chan bool) {
 
 	for n := range c {
 		fmt.Printf("receive value via channel id : %d value %c\n", id, n)
-		done <- true
 	}
-	// 使用channel通知main函数或其他函数,执行完毕
 
+	// 为什么这句话放到循环之外就报错了?
+	done <- true
 }
 
 func channelDemo() {
@@ -58,22 +58,16 @@ func main() {
 }
 
 //receive value via channel id : 0 value a
-//receive value via channel id : 1 value b
-//receive value via channel id : 2 value c
-//receive value via channel id : 3 value d
-//receive value via channel id : 4 value e
-//receive value via channel id : 5 value f
-//receive value via channel id : 6 value g
-//receive value via channel id : 7 value h
-//receive value via channel id : 8 value i
-//receive value via channel id : 9 value j
-//receive value via channel id : 0 value A
-//receive value via channel id : 1 value B
-//receive value via channel id : 2 value C
-//receive value via channel id : 3 value D
-//receive value via channel id : 4 value E
-//receive value via channel id : 5 value F
-//receive value via channel id : 6 value G
-//receive value via channel id : 7 value H
-//receive value via channel id : 8 value I
-//receive value via channel id : 9 value J
+//fatal error: all goroutines are asleep - deadlock!
+//
+//goroutine 1 [chan receive]:
+//main.channelDemo()
+//	/Users/mac/github/go/src/learngo/channel/done/done.go:45 +0xe0
+//main.main()
+//	/Users/mac/github/go/src/learngo/channel/done/done.go:57 +0x20
+//
+//goroutine 18 [chan receive]:
+//main.glob..func2(0x0, 0xc00006e060, 0xc00006e0c0)
+//	/Users/mac/github/go/src/learngo/channel/done/done.go:27 +0x10d
+//created by main.glob..func1
+//	/Users/mac/github/go/src/learngo/channel/done/done.go:20 +0x98
