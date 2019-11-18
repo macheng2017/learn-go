@@ -9,14 +9,14 @@ func channelDemo() {
 
 	c := make(chan int)
 
-	// 如果使用channel发数据没人接收就会deadlock,需要用goroutine接收数据
-	go func() {
+	go func(c chan int) {
 		// 在goroutine中接收数据
+		// 在这里形成了闭包,修改为下面的结构改为非闭包(值传递)
 		for {
 			n := <-c
 			fmt.Printf("receive value via channel : %d\n", n)
 		}
-	}()
+	}(c)
 
 	// 向channel发数据
 	c <- 1
