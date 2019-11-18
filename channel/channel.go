@@ -9,13 +9,15 @@ import (
 // 在返回值定义上 这个chan 只能从外部发数据(外部只写)
 var createWorker = func(id int) chan<- int {
 	c := make(chan int)
-	go func() {
-		for {
-			fmt.Printf("receive value via channel id : %d value %c\n", id, <-c)
-		}
-	}()
+	go worker(id, c)
 
 	return c
+}
+
+var worker = func(id int, c chan int) {
+	for {
+		fmt.Printf("receive value via channel id : %d value %c\n", id, <-c)
+	}
 }
 
 func channelDemo() {
@@ -44,8 +46,13 @@ func channelDemo() {
 
 func bufferedChannel() {
 	// 只发数据没人来收就会报错
-	c := make(chan int)
-	c <- 2
+	// 添加一个参数,缓冲区大小
+	c := make(chan int, 3)
+	go worker(0, c)
+	c <- 'a'
+	c <- 'b'
+	c <- 'c'
+	time.Sleep(time.Millisecond)
 }
 
 func main() {
