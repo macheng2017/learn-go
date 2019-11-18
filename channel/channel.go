@@ -66,7 +66,7 @@ func channelClose() {
 	c <- 'b'
 	c <- 'c'
 	close(c)
-	// close 之后
+	// close 之后将channel接收到的都是空串,再接收方 使用for range 或者 判断下break即可
 	time.Sleep(time.Millisecond)
 }
 func main() {
