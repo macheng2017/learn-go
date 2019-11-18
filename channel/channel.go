@@ -16,7 +16,12 @@ var createWorker = func(id int) chan<- int {
 
 var worker = func(id int, c chan int) {
 	for {
-		fmt.Printf("receive value via channel id : %d value %c\n", id, <-c)
+		// 避免接收空channel
+		n, ok := <-c
+		if !ok {
+			break
+		}
+		fmt.Printf("receive value via channel id : %d value %c\n", id, n)
 	}
 }
 
@@ -48,22 +53,25 @@ func bufferedChannel() {
 	// 只发数据没人来收就会报错
 	// 添加一个参数,缓冲区大小
 	c := make(chan int, 3)
+
 	go worker(0, c)
 	c <- 'a'
 	c <- 'b'
 	c <- 'c'
 	time.Sleep(time.Millisecond)
 }
-
+func channelClose() {
+	c := make(chan int, 3)
+	go worker(0, c)
+	c <- 'a'
+	c <- 'b'
+	c <- 'c'
+	close(c)
+	// close 之后
+	time.Sleep(time.Millisecond)
+}
 func main() {
 	//channelDemo()
-	bufferedChannel()
+	//bufferedChannel()
+	channelClose()
 }
-
-//fatal error: all goroutines are asleep - deadlock!
-//
-//goroutine 1 [chan send]:
-//main.bufferedChannel(...)
-//	/Users/mac/github/go/src/learngo/channel/channel.go:46
-//main.main()
-//	/Users/mac/github/go/src/learngo/channel/channel.go:51 +0x50
