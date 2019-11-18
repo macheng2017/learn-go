@@ -26,10 +26,8 @@ var doWork = func(id int, c chan int, done chan bool) {
 
 	for n := range c {
 		fmt.Printf("receive value via channel id : %d value %c\n", id, n)
-		// 在这里再开一组goroutine就行了
-		go func() {
-			done <- true
-		}()
+		// 在这里再开一组goroutine就行了,但是这种方式不是很好
+		done <- true
 	}
 
 }
@@ -49,15 +47,16 @@ func channelDemo() {
 	// 上个for循环结束之后, doWork中的done <-true 在等待接收者,
 	// 但是我们将<-worker.done移到了最后的for循环当中,
 	// 接下来又是一轮的channel发送,这时就报错了
+	for _, worker := range workers {
+		<-worker.done
+	}
 
 	for i, worker := range workers {
 		worker.in <- 'A' + i
-
 	}
 
 	// wait for all of them
 	for _, worker := range workers {
-		<-worker.done
 		<-worker.done
 	}
 }
