@@ -15,12 +15,11 @@ var createWorker = func(id int) chan<- int {
 }
 
 var worker = func(id int, c chan int) {
-	for {
+	// 使用这种方式也可以避免空channel
+	// 通过这里的用法重新审视 range的意义
+	// range 可以用于遍历 slice 例如 for i := range []byte(s) {}
+	for n := range c {
 		// 避免接收空channel
-		n, ok := <-c
-		if !ok {
-			break
-		}
 		fmt.Printf("receive value via channel id : %d value %c\n", id, n)
 	}
 }
