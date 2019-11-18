@@ -2,83 +2,80 @@ package main
 
 import (
 	"fmt"
+	"sync"
 )
 
 // 定义一个struct
 type worker struct {
-	in   chan int  // 向内部发送数据
-	done chan bool // 向外部发送数据
+	in chan int // 向内部发送数据
+	wg *sync.WaitGroup
 }
 
-var createWorker = func(id int) worker {
+// 需要从外部传入一个 wg 只能有一个(共用一个)
+var createWorker = func(id int, wg *sync.WaitGroup) worker {
 	// 初始化struct包含两个channel,这个很像javabean
 	w := worker{
-		in:   make(chan int),
-		done: make(chan bool),
+		in: make(chan int),
+		wg: wg,
 	}
 
-	go doWork(id, w.in, w.done)
+	go doWork(id, w.in, wg)
 
 	return w
 }
 
-var doWork = func(id int, c chan int, done chan bool) {
+var doWork = func(id int, c chan int, wg *sync.WaitGroup) {
 
 	for n := range c {
 		fmt.Printf("receive value via channel id : %d value %c\n", id, n)
-		// 在这里再开一组goroutine就行了,但是这种方式不是很好
-		done <- true
+		wg.Done()
 	}
 
 }
 
 func channelDemo() {
+	var wg sync.WaitGroup
 
 	var workers [10]worker
 	for i := 0; i < 10; i++ {
-		workers[i] = createWorker(i)
+		workers[i] = createWorker(i, &wg)
 	}
+	// 加入等待20个任务
+	wg.Add(20)
 
 	// 向channel发数据
 	for i, worker := range workers {
 		worker.in <- 'a' + i
-
-	}
-	// 上个for循环结束之后, doWork中的done <-true 在等待接收者,
-	// 但是我们将<-worker.done移到了最后的for循环当中,
-	// 接下来又是一轮的channel发送,这时就报错了
-	for _, worker := range workers {
-		<-worker.done
 	}
 
 	for i, worker := range workers {
 		worker.in <- 'A' + i
 	}
 
-	// wait for all of them
-	for _, worker := range workers {
-		<-worker.done
-	}
+	wg.Wait()
 }
 
 func main() {
 	channelDemo()
 }
 
-//receive value via channel id : 9 value j
-//receive value via channel id : 1 value b
-//receive value via channel id : 3 value d
-//receive value via channel id : 6 value g
 //receive value via channel id : 5 value f
-//receive value via channel id : 8 value i
-//receive value via channel id : 0 value a
-//receive value via channel id : 7 value h
-//receive value via channel id : 2 value c
 //receive value via channel id : 4 value e
-//fatal error: all goroutines are asleep - deadlock!
-//
-//goroutine 1 [chan send]:
-//main.channelDemo()
-//	/Users/mac/github/go/src/learngo/channel/done/done.go:50 +0x16a
-//main.main()
-//	/Users/mac/github/go/src/learngo/channel/done/done.go:62 +0x20
+//receive value via channel id : 7 value h
+//receive value via channel id : 0 value a
+//receive value via channel id : 2 value c
+//receive value via channel id : 1 value b
+//receive value via channel id : 2 value C
+//receive value via channel id : 9 value j
+//receive value via channel id : 0 value A
+//receive value via channel id : 1 value B
+//receive value via channel id : 3 value d
+//receive value via channel id : 3 value D
+//receive value via channel id : 4 value E
+//receive value via channel id : 8 value i
+//receive value via channel id : 5 value F
+//receive value via channel id : 6 value g
+//receive value via channel id : 6 value G
+//receive value via channel id : 9 value J
+//receive value via channel id : 8 value I
+//receive value via channel id : 7 value H
