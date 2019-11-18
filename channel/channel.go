@@ -5,10 +5,10 @@ import (
 	"time"
 )
 
-var createWorker = func(id int) chan int {
+// 告诉外部调用者如何使用内部定义的channel
+// 在返回值定义上 这个chan 只能从外部发数据(外部只写)
+var createWorker = func(id int) chan<- int {
 	c := make(chan int)
-	// 这个函数被执行之后 c:= ... 和return 会一瞬间执行完毕并返回一个channel供外部使用(传值)
-	// go func 会慢慢开goroutine 再执行内部,再从当前函数初始化的channel 中拿取外部传进的值
 	go func() {
 		for {
 			fmt.Printf("receive value via channel id : %d value %c\n", id, <-c)
@@ -19,8 +19,8 @@ var createWorker = func(id int) chan int {
 }
 
 func channelDemo() {
-	// channel 作为数组
-	var c [10]chan int
+	// 相应的这里只能定义一个只能向内部发送数据的channel(只写)
+	var c [10]chan<- int
 	for i := 0; i < 10; i++ {
 		// 用返回的值初始化,上面定义的channel数组
 		c[i] = createWorker(i)
@@ -30,6 +30,9 @@ func channelDemo() {
 
 	for i := 0; i < 10; i++ {
 		c[i] <- 'a' + i
+		// 只能向其内部发送数据
+		//./channel.go:34:8: invalid operation: <-c[i] (receive from send-only type chan<- int)
+		//n := <-c[i]
 	}
 
 	for i := 0; i < 10; i++ {
