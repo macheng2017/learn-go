@@ -8,7 +8,8 @@ import (
 // 定义一个struct
 type worker struct {
 	in chan int // 向内部发送数据
-	wg *sync.WaitGroup
+	// 使用函数式编程将wg抽象一下
+	done func()
 }
 
 // 需要从外部传入一个 wg 只能有一个(共用一个)
@@ -16,19 +17,21 @@ var createWorker = func(id int, wg *sync.WaitGroup) worker {
 	// 初始化struct包含两个channel,这个很像javabean
 	w := worker{
 		in: make(chan int),
-		wg: wg,
+		done: func() {
+			wg.Done()
+		},
 	}
 
-	go doWork(id, w.in, wg)
+	go doWork(id, w)
 
 	return w
 }
 
-var doWork = func(id int, c chan int, wg *sync.WaitGroup) {
+var doWork = func(id int, w worker) {
 
-	for n := range c {
+	for n := range w.in {
 		fmt.Printf("receive value via channel id : %d value %c\n", id, n)
-		wg.Done()
+		w.done()
 	}
 
 }
