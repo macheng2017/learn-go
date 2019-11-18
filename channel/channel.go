@@ -16,13 +16,14 @@ func channelDemo() {
 
 	var c [10]chan int
 	for i := 0; i < 10; i++ {
-		// 初始化10个 goroutine 和10个 channel
+		// 用make给每个nil chan 初始化
+		c[i] = make(chan int)
 		go worker(i, c[i])
 	}
 
 	// 向channel发数据
 	for i := 0; i < 10; i++ {
-		c[i] <- 'a' + 1
+		c[i] <- 'a' + i
 	}
 
 	// 防止main函数提前执行完,结束掉整个程序
@@ -31,10 +32,14 @@ func channelDemo() {
 
 func main() {
 	channelDemo()
-	// 执行后发现有个错误,不能向一个 nil chan 发送数据
-	//	goroutine 1 [chan send (nil chan)]:
-	//main.channelDemo()
-	//	/Users/mac/github/go/src/learngo/channel/channel.go:25 +0xaf
-	//main.main()
-	//	/Users/mac/github/go/src/learngo/channel/channel.go:33 +0x20
+	//receive value via channel id : 8 value i
+	//receive value via channel id : 0 value a
+	//receive value via channel id : 6 value g
+	//receive value via channel id : 1 value b
+	//receive value via channel id : 2 value c
+	//receive value via channel id : 4 value e
+	//receive value via channel id : 3 value d
+	//receive value via channel id : 5 value f
+	//receive value via channel id : 7 value h
+	//receive value via channel id : 9 value j
 }
