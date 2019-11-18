@@ -26,10 +26,11 @@ var doWork = func(id int, c chan int, done chan bool) {
 
 	for n := range c {
 		fmt.Printf("receive value via channel id : %d value %c\n", id, n)
-		done <- true
+		// 在这里再开一组goroutine就行了
+		go func() {
+			done <- true
+		}()
 	}
-
-	// 为什么这句话放到循环之外就报错了?
 
 }
 
@@ -45,6 +46,9 @@ func channelDemo() {
 		worker.in <- 'a' + i
 
 	}
+	// 上个for循环结束之后, doWork中的done <-true 在等待接收者,
+	// 但是我们将<-worker.done移到了最后的for循环当中,
+	// 接下来又是一轮的channel发送,这时就报错了
 
 	for i, worker := range workers {
 		worker.in <- 'A' + i
