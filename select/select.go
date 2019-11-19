@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// 生产者
 func generator() chan int {
 	out := make(chan int)
 	go func() {
@@ -20,33 +21,33 @@ func generator() chan int {
 	return out
 }
 
+//消费者
+var worker = func(id int, c chan int) {
+	for n := range c {
+		// 避免接收空channel
+		fmt.Printf("receive value via channel id : %d value %d\n", id, n)
+	}
+}
+
+var createWorker = func(id int) chan<- int {
+	c := make(chan int)
+	go worker(id, c)
+	return c
+}
+
 func main() {
 	var c1, c2 = generator(), generator()
-	// 使用select+ default ,做一个非阻塞式收数据
+	// 把收过来的n送给work
+	w := createWorker(0)
 
 	for {
 		select {
+		// 这样有缺点,在select中收一个数,收完之后下面一行又会阻塞
 		case n := <-c1:
-			fmt.Println("Receive from c1", n)
+			w <- n
 		case n := <-c2:
-			fmt.Println("Receive from c2", n)
-			//default:
-			//	fmt.Println("no value received  ")
-			//
+			w <- n
+
 		}
 	}
-	//Receive from c1 0
-	//Receive from c2 0
-	//Receive from c2 1
-	//Receive from c1 1
-	//Receive from c1 2
-	//Receive from c2 2
-	//Receive from c1 3
-	//Receive from c2 3
-	//Receive from c2 4
-	//Receive from c2 5
-	//Receive from c1 4
-	//Receive from c1 5
-	//Receive from c1 6
-	//Receive from c2 6
 }

@@ -2,17 +2,22 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"time"
 )
 
+// goroutine 会随着主线程结束而结束
 func main() {
-	const name, age = "Kim", 22
-	fmt.Fprintln(os.Stdout, name, "is", age, "years old.")
+	//fmt.Println("go")
+	var a [10]int
+	for i := 0; i < 10; i++ {
+		go func() {
+			for {
+				a[i]++
+			}
+		}()
+	}
+	//fmt.Println("end")
+	time.Sleep(time.Millisecond)
+	fmt.Println(a)
 
-	// The n and err return values from Fprintln are
-	// those returned by the underlying io.Writer.
-	//if err != nil {
-	//	fmt.Fprintf(os.Stderr, "Fprintln: %v\n", err)
-	//}
-	//fmt.Println(n, "bytes written.")
 }
