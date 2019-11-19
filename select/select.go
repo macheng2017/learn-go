@@ -41,13 +41,22 @@ func main() {
 	w := createWorker(0)
 
 	for {
+		n := 0
 		select {
-		// 这样有缺点,在select中收一个数,收完之后下面一行又会阻塞
-		case n := <-c1:
-			w <- n
-		case n := <-c2:
-			w <- n
+		// 这样还有问题,就是 47,48行这两个case 收数据会等待一段时间,
+		// 程序会直接执行49行,这时n恒等于0,消费者会一直打印0
+		case n = <-c1:
+		case n = <-c2:
+		case w <- n:
 
 		}
 	}
 }
+
+//receive value via channel id : 0 value 0
+//receive value via channel id : 0 value 0
+//receive value via channel id : 0 value 0
+//receive value via channel id : 0 value 0
+//receive value via channel id : 0 value 0
+//receive value via channel id : 0 value 0
+//receive value via channel id : 0 value 0
