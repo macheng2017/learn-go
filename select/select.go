@@ -59,7 +59,7 @@ func main() {
 			values = append(values, n)
 		case n := <-c2:
 			values = append(values, n)
-			// 如果过了800ms没有生成数据则打印timeout
+			// 有个小问题,上面生成的数据和下面的 tick周期性检测有可能重叠,这样timeout就很难达到条件
 		case <-time.After(800 * time.Millisecond):
 			fmt.Println("timeout")
 		// 如果有值,则送过去消耗
