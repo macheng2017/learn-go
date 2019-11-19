@@ -56,7 +56,10 @@ func main() {
 			values = append(values, n)
 		case n := <-c2:
 			values = append(values, n)
-			// 如果有值,则送过去消耗
+			// 如果过了800ms没有生成数据则打印timeout
+		case <-time.After(800 * time.Millisecond):
+			fmt.Println("timeout")
+		// 如果有值,则送过去消耗
 		case activeWorker <- activeValue:
 			// 送过去之后,将第一个移除
 			values = values[1:]
