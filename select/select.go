@@ -24,11 +24,18 @@ func generator() chan int {
 //消费者
 var worker = func(id int, c chan int) {
 	for n := range c {
-		// 避免接收空channel
+		// 新问题,生产数据速度太快而消耗速度太慢的时候就会发生有些数据会跳过去
+		time.Sleep(5000 * time.Millisecond)
 		fmt.Printf("receive value via channel id : %d value %d\n", id, n)
 	}
 }
 
+//receive value via channel id : 0 value 0
+//receive value via channel id : 0 value 7
+//receive value via channel id : 0 value 12
+//receive value via channel id : 0 value 20
+//receive value via channel id : 0 value 27
+//receive value via channel id : 0 value 34
 var createWorker = func(id int) chan<- int {
 	c := make(chan int)
 	go worker(id, c)
