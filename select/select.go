@@ -60,6 +60,7 @@ func main() {
 		case n := <-c2:
 			values = append(values, n)
 			// 有个小问题,上面生成的数据和下面的 tick周期性检测有可能重叠,这样timeout就很难达到条件
+			// 相邻两个请求之间的timeout
 		case <-time.After(800 * time.Millisecond):
 			fmt.Println("timeout")
 		// 如果有值,则送过去消耗
@@ -67,9 +68,10 @@ func main() {
 			// 送过去之后,将第一个移除
 			values = values[1:]
 
-			// 每过1s发送一次values的长度
+			// 通过tick返回系统的状态
 		case <-tick:
 			fmt.Println("values length", len(values))
+			// 设置系统运行的时长
 		case <-tm:
 			fmt.Println("bye")
 			return
