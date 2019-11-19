@@ -25,7 +25,7 @@ func generator() chan int {
 var worker = func(id int, c chan int) {
 	for n := range c {
 		// 新问题,生产数据速度太快而消耗速度太慢的时候就会发生有些数据会跳过去
-		time.Sleep(5000 * time.Millisecond)
+		time.Sleep(time.Millisecond)
 		fmt.Printf("receive value via channel id : %d value %d\n", id, n)
 	}
 }
@@ -41,6 +41,8 @@ func main() {
 	var worker = createWorker(0)
 	// 解决办法: 可以让收到的n先存下来排队
 	var values []int
+	// 返回一个chan time
+	tm := time.After(10 * time.Second)
 	for {
 		var activeWorker chan<- int
 		var activeValue int
@@ -58,6 +60,9 @@ func main() {
 		case activeWorker <- activeValue:
 			// 送过去之后,将第一个移除
 			values = values[1:]
+		case <-tm:
+			fmt.Println("bye")
+			return
 		}
 	}
 }
