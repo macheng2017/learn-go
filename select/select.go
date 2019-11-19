@@ -30,12 +30,6 @@ var worker = func(id int, c chan int) {
 	}
 }
 
-//receive value via channel id : 0 value 0
-//receive value via channel id : 0 value 7
-//receive value via channel id : 0 value 12
-//receive value via channel id : 0 value 20
-//receive value via channel id : 0 value 27
-//receive value via channel id : 0 value 34
 var createWorker = func(id int) chan<- int {
 	c := make(chan int)
 	go worker(id, c)
@@ -45,21 +39,36 @@ var createWorker = func(id int) chan<- int {
 func main() {
 	var c1, c2 = generator(), generator()
 	var worker = createWorker(0)
-
-	n := 0
-	hasValue := false
+	// 解决办法: 可以让收到的n先存下来排队
+	var values []int
 	for {
-		var activeWorker chan<- int // 利用这样定义初始值为nil的性质
-		if hasValue {
+		var activeWorker chan<- int
+		var activeValue int
+		if len(values) > 0 {
 			activeWorker = worker
+			activeValue = values[0]
 		}
 		select {
-		case n = <-c1:
-			hasValue = true
-		case n = <-c2:
-			hasValue = true
-		case activeWorker <- n:
-			hasValue = false
+		case n := <-c1:
+			// 在这里进行排队,排完队之后让别人消耗他
+			values = append(values, n)
+		case n := <-c2:
+			values = append(values, n)
+			// 如果有值,则送过去消耗
+		case activeWorker <- activeValue:
+			// 送过去之后,将第一个移除
+			values = values[1:]
 		}
 	}
 }
+
+// 这样就解决了,生产者快于消费之,中间的数据会被跳过(覆盖)的问题
+//receive value via channel id : 0 value 0
+//receive value via channel id : 0 value 0
+//receive value via channel id : 0 value 1
+//receive value via channel id : 0 value 1
+//receive value via channel id : 0 value 2
+//receive value via channel id : 0 value 2
+//receive value via channel id : 0 value 3
+//receive value via channel id : 0 value 3
+//receive value via channel id : 0 value 4
