@@ -94,7 +94,11 @@ func walk(maze [][]int, start, end point) {
 			if next == start {
 				continue
 			}
+			//如图所示,要探索一个点的步骤就是,将其下一步点的坐标加入到队列当中
+			curSetps, _ := cur.at(steps)
+			steps[next.i][next.j] = curSetps + 1
 
+			Q = append(Q, next)
 		}
 
 	}
