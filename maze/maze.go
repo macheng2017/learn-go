@@ -34,6 +34,16 @@ type point struct {
 	i, j int
 }
 
+// 定义一个函数,将当前的坐标值与上左下右的坐标相加
+func (p point) add(r point) interface{} {
+	return point{p.i + r.i, p.j + r.j}
+}
+
+// 定义出上左下右这四个方向
+var dirs = [4]point{
+	{-1, 0}, {0, -1}, {1, 0}, {0, 1},
+}
+
 // 将地图传入行走函数,并且定义出起点和结束位置
 func walk(maze [][]int, start, end point) {
 	//定义一个 step二维数组,用来存放步数,这个概念很重要,最终的路径都是有一个个步数连成的
@@ -48,6 +58,15 @@ func walk(maze [][]int, start, end point) {
 	// 定义一个循环并写好退出条件
 	// 1. 队列为空 2. 到达终点
 	for len(Q) > 0 {
+		// 当前节点
+		cur := Q[0]
+		Q = Q[1:]
+		// 按照上左下右的顺序探索地图,先定义出这四个方向,然后相加(发现新的节点)
+
+		for _, dir := range dirs {
+			next := cur.add(dir)
+		}
+
 	}
 
 }
