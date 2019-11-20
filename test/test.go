@@ -2,22 +2,21 @@ package main
 
 import (
 	"fmt"
-	"time"
+	"os"
+	"strings"
 )
 
-// goroutine 会随着主线程结束而结束
 func main() {
-	//fmt.Println("go")
-	var a [10]int
-	for i := 0; i < 10; i++ {
-		go func() {
-			for {
-				a[i]++
-			}
-		}()
+	var (
+		i int
+		b bool
+		s string
+	)
+	r := strings.NewReader("5 truegophers")
+	n, err := fmt.Fscanf(r, "%d %s ", &i, &s)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Fscanf: %v\n", err)
 	}
-	//fmt.Println("end")
-	time.Sleep(time.Millisecond)
-	fmt.Println(a)
-
+	fmt.Println(i, s)
+	fmt.Println(n)
 }
