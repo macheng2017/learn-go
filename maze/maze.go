@@ -40,8 +40,14 @@ func walk(maze [][]int, start, end point) {
 	// 定义方式和上面的地图中的二维数组方法一样
 	steps := make([][]int, len(maze))
 	for i := range steps {
-		// 初始化后的二维数组都是0
+		// 初始化后的二维数组都是0,这里和地图中的带围墙(数字1)不太一样
 		steps[i] = make([]int, len(maze[i]))
+	}
+	// 定义一个队列,将起点加入到队列当中作为初始值
+	Q := []point{start}
+	// 定义一个循环并写好退出条件
+	// 1. 队列为空 2. 到达终点
+	for len(Q) > 0 {
 	}
 
 }
