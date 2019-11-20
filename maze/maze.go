@@ -46,7 +46,7 @@ var dirs = [4]point{
 
 func (p point) at(grid [][]int) (int, bool) {
 	// 使用bool表示是否越界(地图上是否越界)
-	if p.i < 0 || p.j >= len(grid) {
+	if p.i < 0 || p.i >= len(grid) {
 		return 0, false
 	}
 	if p.j < 0 || p.j >= len(grid[p.i]) {
@@ -57,7 +57,7 @@ func (p point) at(grid [][]int) (int, bool) {
 }
 
 // 将地图传入行走函数,并且定义出起点和结束位置
-func walk(maze [][]int, start, end point) {
+func walk(maze [][]int, start, end point) [][]int {
 	//定义一个 step二维数组,用来存放步数,这个概念很重要,最终的路径都是有一个个步数连成的
 	// 定义方式和上面的地图中的二维数组方法一样
 	steps := make([][]int, len(maze))
@@ -73,6 +73,10 @@ func walk(maze [][]int, start, end point) {
 		// 当前节点
 		cur := Q[0]
 		Q = Q[1:]
+		// 退出条件之一
+		if cur == end {
+			break
+		}
 		// 按照上左下右的顺序探索地图,先定义出这四个方向,然后相加(发现新的节点)
 
 		for _, dir := range dirs {
@@ -102,6 +106,7 @@ func walk(maze [][]int, start, end point) {
 		}
 
 	}
+	return steps
 
 }
 
@@ -110,13 +115,20 @@ func main() {
 	// 起始位置是地图的左上角,定义出点的结构体
 	start := point{0, 0}
 	end := point{len(res) - 1, len(res[0]) - 1}
-	walk(res, start, end)
+	steps := walk(res, start, end)
+
+	for _, row := range steps {
+		for _, val := range row {
+			fmt.Printf("%d   ", val)
+		}
+		fmt.Println()
+	}
 
 }
 
-//0 1 0 0 0
-//0 0 0 1 0
-//0 1 0 1 0
-//1 1 1 0 0
-//0 1 0 0 1
-//0 1 0 0 0
+//0   0   4   5   6
+//1   2   3   0   7
+//2   0   4   0   8
+//0   0   0   10   9
+//0   0   12   11   0
+//0   0   13   12   13
