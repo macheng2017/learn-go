@@ -35,17 +35,16 @@ type point struct {
 }
 
 // 将地图传入行走函数,并且定义出起点和结束位置
-func walk(maze [][]int, start [][]int, end [][]int) {
+func walk(maze [][]int, start, end point) {
 
 }
 
 func main() {
 	res := readMaze("maze/maze.in")
 	// 起始位置是地图的左上角,定义出点的结构体
-	walk(res,
-	{
-		0, len(res) - 1
-	}, len(res[0]) - 1)
+	start := point{0, 0}
+	end := point{len(res) - 1, len(res[0]) - 1}
+	walk(res, start, end)
 
 }
 
