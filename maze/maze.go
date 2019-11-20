@@ -29,13 +29,20 @@ func readMaze(filename string) [][]int {
 	return maze
 }
 
-// 定义出点的结构体
+// 定义出点的结构体,不要用x,y因为我们定义的坐标轴正好和笛卡尔坐标系相反,使用x,y容易混淆
 type point struct {
 	i, j int
 }
 
 // 将地图传入行走函数,并且定义出起点和结束位置
 func walk(maze [][]int, start, end point) {
+	//定义一个 step二维数组,用来存放步数,这个概念很重要,最终的路径都是有一个个步数连成的
+	// 定义方式和上面的地图中的二维数组方法一样
+	steps := make([][]int, len(maze))
+	for i := range steps {
+		// 初始化后的二维数组都是0
+		steps[i] = make([]int, len(maze[i]))
+	}
 
 }
 
