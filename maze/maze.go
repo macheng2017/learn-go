@@ -29,15 +29,23 @@ func readMaze(filename string) [][]int {
 	return maze
 }
 
+// 定义出点的结构体
+type point struct {
+	i, j int
+}
+
+// 将地图传入行走函数,并且定义出起点和结束位置
+func walk(maze [][]int, start [][]int, end [][]int) {
+
+}
+
 func main() {
 	res := readMaze("maze/maze.in")
-	//fmt.Println(res)
-	for _, row := range res {
-		for _, col := range row {
-			fmt.Printf("%d ", col)
-		}
-		fmt.Println()
-	}
+	// 起始位置是地图的左上角,定义出点的结构体
+	walk(res,
+	{
+		0, len(res) - 1
+	}, len(res[0]) - 1)
 
 }
 
