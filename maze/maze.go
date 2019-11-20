@@ -31,7 +31,19 @@ func readMaze(filename string) [][]int {
 
 func main() {
 	res := readMaze("maze/maze.in")
-	fmt.Println(res)
+	//fmt.Println(res)
+	for _, row := range res {
+		for _, col := range row {
+			fmt.Printf("%d ", col)
+		}
+		fmt.Println()
+	}
+
 }
 
-// [[0 1 0 0 0] [0 0 0 1 0] [0 1 0 1 0] [1 1 1 0 0] [0 1 0 0 1] [0 1 0 0 0]]
+//0 1 0 0 0
+//0 0 0 1 0
+//0 1 0 1 0
+//1 1 1 0 0
+//0 1 0 0 1
+//0 1 0 0 0
