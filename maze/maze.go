@@ -35,13 +35,25 @@ type point struct {
 }
 
 // 定义一个函数,将当前的坐标值与上左下右的坐标相加
-func (p point) add(r point) interface{} {
+func (p point) add(r point) point {
 	return point{p.i + r.i, p.j + r.j}
 }
 
 // 定义出上左下右这四个方向
 var dirs = [4]point{
 	{-1, 0}, {0, -1}, {1, 0}, {0, 1},
+}
+
+func (p point) at(grid [][]int) (int, bool) {
+	// 使用bool表示是否越界(地图上是否越界)
+	if p.i < 0 || p.j >= len(grid) {
+		return 0, false
+	}
+	if p.j < 0 || p.j >= len(grid[p.i]) {
+		return 0, false
+	}
+
+	return grid[p.i][p.j], true
 }
 
 // 将地图传入行走函数,并且定义出起点和结束位置
@@ -65,6 +77,24 @@ func walk(maze [][]int, start, end point) {
 
 		for _, dir := range dirs {
 			next := cur.add(dir)
+			// maze at next is 0
+			// and steps at next is 0
+			// and next != start
+			// 必须满足上面的条件才能走过去,这样条件比较多
+			// 可以反过来,把不满足条件的剔除
+
+			val, ok := next.at(maze)
+			if !ok || val == 1 {
+				continue
+			}
+			val, ok = next.at(steps)
+			if !ok || val != 0 {
+				continue
+			}
+			if next == start {
+				continue
+			}
+
 		}
 
 	}
