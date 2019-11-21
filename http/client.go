@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"net/http/httputil"
 )
 
 func main() {
@@ -13,7 +13,9 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	bytes, err := ioutil.ReadAll(resp.Body)
+	// bytes, err := ioutil.ReadAll(resp.Body)
+	// 与之前的相比较多了头部信息
+	bytes, err := httputil.DumpResponse(resp, true)
 	if err != nil {
 		log.Fatal(err)
 	}
