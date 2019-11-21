@@ -119,7 +119,8 @@ func main() {
 
 	for _, row := range steps {
 		for _, val := range row {
-			fmt.Printf("%d   ", val)
+			// %3d就是三位对齐
+			fmt.Printf("%3d ", val)
 		}
 		fmt.Println()
 	}
