@@ -9,7 +9,7 @@ import (
 
 func main() {
 
-	request, e := http.NewRequest(http.MethodGet, "http://www.imooc.com", nil)
+	request, e := http.NewRequest(http.MethodGet, "http://www.sina.com", nil)
 
 	if e != nil {
 		fmt.Println(e)
@@ -17,6 +17,7 @@ func main() {
 	request.Header.Add("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1")
 	// 自定义一个client,用于查看重定向信息
 	client := http.Client{
+		// req 是重定向目标网址,via 是记录重定向的网址,如果返回的error不为空则
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			fmt.Println("Redirect: ", req)
 			fmt.Printf("%s\n", via)

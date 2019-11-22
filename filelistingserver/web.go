@@ -4,6 +4,9 @@ import (
 	"learngo/filelistingserver/filelisting"
 	"log"
 	"net/http"
+
+	// 由于代码内没使用这个包,添加_ 可以防止被自动删除,以便使用 http://localhost:8888/debug/pprof/
+	_ "net/http/pprof"
 	"os"
 )
 
