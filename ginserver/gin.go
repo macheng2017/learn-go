@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math/rand"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -24,12 +25,23 @@ func main() {
 			zap.String("path", c.Request.URL.Path),
 			zap.Int("status", c.Writer.Status()), zap.Duration("elapsed", time.Now().Sub(s)))
 
-	})
+	},
+		// 再添加一个中间件,在context中添加一个值
+		func(c *gin.Context) {
+
+			c.Set("requestId", rand.Int())
+		})
 
 	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
+		rid, exists := c.Get("requestId")
+
+		hs := gin.H{
 			"message": "pong",
-		})
+		}
+		if exists {
+			hs["requestId"] = rid
+		}
+		c.JSON(200, hs)
 	})
 
 	r.GET("/hello", func(c *gin.Context) {
