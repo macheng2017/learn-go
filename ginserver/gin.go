@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -13,10 +15,15 @@ func main() {
 		panic(e)
 	}
 	r.Use(func(c *gin.Context) {
+		s := time.Now()
+		// 洋葱模型?
+		c.Next()
 		// 结构化log信息
 		// path , log latency, response code
-		logger.Info("incoming request", zap.String("path", c.Request.URL.Path))
-		c.Next()
+		logger.Info("incoming request",
+			zap.String("path", c.Request.URL.Path),
+			zap.Int("status", c.Writer.Status()), zap.Duration("elapsed", time.Now().Sub(s)))
+
 	})
 
 	r.GET("/ping", func(c *gin.Context) {
