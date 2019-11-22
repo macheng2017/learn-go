@@ -8,6 +8,8 @@ import (
 	"go.uber.org/zap"
 )
 
+const keyRequestId = "requestId"
+
 func main() {
 	r := gin.Default()
 	// 添加一个中间件
@@ -15,6 +17,7 @@ func main() {
 	if e != nil {
 		panic(e)
 	}
+
 	r.Use(func(c *gin.Context) {
 		s := time.Now()
 		// 洋葱模型?
@@ -29,17 +32,17 @@ func main() {
 		// 再添加一个中间件,在context中添加一个值
 		func(c *gin.Context) {
 
-			c.Set("requestId", rand.Int())
+			c.Set(keyRequestId, rand.Int())
 		})
 
 	r.GET("/ping", func(c *gin.Context) {
-		rid, exists := c.Get("requestId")
+		rid, exists := c.Get(keyRequestId)
 
 		hs := gin.H{
 			"message": "pong",
 		}
 		if exists {
-			hs["requestId"] = rid
+			hs[keyRequestId] = rid
 		}
 		c.JSON(200, hs)
 	})
