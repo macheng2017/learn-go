@@ -39,6 +39,7 @@ func main() {
 
 }
 
+// 有个问题,使用了determineEncoding 之后打印内容不全,这是怎么回事?
 func determineEncoding(r io.Reader) encoding.Encoding {
 	//直接使用 resp.body读完之后就没办法再读了?
 	bytes, err := bufio.NewReader(r).Peek(1024)
