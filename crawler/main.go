@@ -1,12 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 
-	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
 
 	"golang.org/x/net/html/charset"
@@ -27,12 +27,11 @@ func main() {
 	}
 	// 判断网页内容编码格式两种方式
 
-	// 1. 手动判断网页编码格式
-	// 添加 go get -v golang.org/x/text/
-	utf8Reader := transform.NewReader(resp.Body, simplifiedchinese.GBK.NewDecoder())
+	// 2. 自动判断网页内容编码格式
+	// 添加 go get  -v golang.org/x/net/html
+	e := determineEncoding(resp.Body)
+	utf8Reader := transform.NewReader(resp.Body, e.NewDecoder())
 	bytes, err := ioutil.ReadAll(utf8Reader)
-
-	//bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		panic(err)
 	}
@@ -40,8 +39,12 @@ func main() {
 
 }
 
-// 2. 自动判断网页内容编码格式
-// 添加 go get  -v golang.org/x/net/html
 func determineEncoding(r io.Reader) encoding.Encoding {
-	charset.DetermineEncoding()
+	//直接使用 resp.body读完之后就没办法再读了?
+	bytes, err := bufio.NewReader(r).Peek(1024)
+	if err != nil {
+		panic(err)
+	}
+	e, _, _ := charset.DetermineEncoding(bytes, "")
+	return e
 }
