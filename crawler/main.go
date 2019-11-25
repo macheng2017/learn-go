@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"regexp"
 
 	"golang.org/x/text/transform"
 
@@ -35,7 +36,16 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("%s\n", bytes)
+	//fmt.Printf("%s\n", bytes)
+	printCityList(bytes)
+}
+
+func printCityList(bytes []byte) {
+	re := regexp.MustCompile(`<a href="http://www.zhenai.com/zhenghun/[0-9a-z]+" data-v-5e16505f>阿克苏</a>`)
+	all := re.FindAll(bytes, -1)
+	for _, m := range all {
+		fmt.Printf("%s", m)
+	}
 
 }
 
