@@ -41,11 +41,13 @@ func main() {
 }
 
 func printCityList(bytes []byte) {
-	re := regexp.MustCompile(`<a href="http://www.zhenai.com/zhenghun/[0-9a-z]+" data-v-5e16505f>阿克苏</a>`)
+	// 这里的[^>]*  ^>意思是取反,不包括'>' 合起来意思是不包括'>'的任意多个字符
+	re := regexp.MustCompile(`<a href="http://www.zhenai.com/zhenghun/[0-9a-z]+" [^>]*>[^>]+</a>`)
 	all := re.FindAll(bytes, -1)
 	for _, m := range all {
-		fmt.Printf("%s", m)
+		fmt.Printf("%s\n", m)
 	}
+	fmt.Println("count tage", len(all))
 
 }
 
