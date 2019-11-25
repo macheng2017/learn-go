@@ -10,8 +10,11 @@ func main() {
 			email2 haha@gmail.com.cn
 	email3 13222@gmail.com.cn@abc.com.cn
 `
-	re := regexp.MustCompile(`[a-zA-Z0-9]+@[a-zA-Z0-9.]+\.[a-zA-Z0-9]+`)
+	// 提取email中的内容
+	re := regexp.MustCompile(`([a-zA-Z0-9]+)@([a-zA-Z0-9.]+)\.([a-zA-Z0-9]+)`)
 
-	s := re.FindAllString(text, -1)
-	fmt.Println(s)
+	s := re.FindAllStringSubmatch(text, -1)
+	for _, m := range s {
+		fmt.Println(m)
+	}
 }
