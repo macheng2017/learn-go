@@ -47,10 +47,7 @@ func printCityList(bytes []byte) {
 	re := regexp.MustCompile(`<a href="(http://www.zhenai.com/zhenghun/[0-9a-z]+)"[^>]*>([^>]+)</a>`)
 	all := re.FindAllSubmatch(bytes, -1)
 	for _, m := range all {
-		for _, a := range m {
-			fmt.Printf(" %s ", a)
-		}
-		fmt.Println()
+		fmt.Printf(" city: %s URL: %s\n", m[2], m[1])
 	}
 	fmt.Println("count tage", len(all))
 
