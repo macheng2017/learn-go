@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
+
+	"golang.org/x/text/encoding/unicode"
 
 	"golang.org/x/net/html/charset"
 	"golang.org/x/text/encoding"
@@ -38,7 +41,9 @@ func determineEncoding(r io.Reader) encoding.Encoding {
 	//直接使用 resp.body读完之后就没办法再读了?
 	bytes, err := bufio.NewReader(r).Peek(1024)
 	if err != nil {
-		panic(err)
+		// 如果解析错误则打印错误日志,还是返回一个默认的编码格式
+		log.Panicf("Fetcher error:%v", err)
+		return unicode.UTF8
 	}
 	e, _, _ := charset.DetermineEncoding(bytes, "")
 	return e
