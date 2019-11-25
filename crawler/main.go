@@ -44,10 +44,13 @@ func printCityList(bytes []byte) {
 	// 这里的[^>]*  ^>意思是取反,不包括'>' 合起来意思是不包括'>'的任意多个字符
 	// 用来匹配<a href="http://www.zhenai.com/zhenghun/changde" data-v-5e16505f>常德</a>
 	// 正确的写法就是,先把上面要匹配的内容复制到字符串模板当中,把其中不同的部分改成正则表达式即可
-	re := regexp.MustCompile(`<a href="http://www.zhenai.com/zhenghun/[0-9a-z]+" [^>]*>[^>]+</a>`)
-	all := re.FindAll(bytes, -1)
+	re := regexp.MustCompile(`<a href="(http://www.zhenai.com/zhenghun/[0-9a-z]+)"[^>]*>([^>]+)</a>`)
+	all := re.FindAllSubmatch(bytes, -1)
 	for _, m := range all {
-		fmt.Printf("%s\n", m)
+		for _, a := range m {
+			fmt.Printf(" %s ", a)
+		}
+		fmt.Println()
 	}
 	fmt.Println("count tage", len(all))
 
