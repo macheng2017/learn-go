@@ -10,10 +10,10 @@ func TestParseCityList(t *testing.T) {
 	contents, err := ioutil.ReadFile("citylist_test_data.html")
 
 	expectedUrls := []string{
-		"", "", "",
+		"http://www.zhenai.com/zhenghun/aba", "http://www.zhenai.com/zhenghun/akesu", "http://www.zhenai.com/zhenghun/alashanmeng",
 	}
 	expectedCities := []string{
-		"", "", "",
+		"阿坝", "阿克苏", "阿拉善盟",
 	}
 
 	if err != nil {
@@ -22,6 +22,7 @@ func TestParseCityList(t *testing.T) {
 	// 测试是否是470个城市的名称和url
 	result := ParseCityList(contents)
 	const resultSize = 470
+	//fmt.Println(result)
 	if len(result.Requests) != resultSize {
 		t.Errorf("result should have %d requests; but had %d", resultSize, len(result.Requests))
 	}
