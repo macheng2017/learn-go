@@ -13,7 +13,7 @@ type ParseResult struct {
 	Items    []interface{}
 }
 
-// 添加一个nilparser空函数
+// 添加一个nilParser空函数
 func NilParser([]byte) ParseResult {
 	return ParseResult{}
 }
