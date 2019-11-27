@@ -9,7 +9,7 @@ import (
 
 var nameRe = regexp.MustCompile(`<h1 class="nickName" [^>]*>([^<]+)</h1>`)
 var ageRe = regexp.MustCompile(`<div class="m-btn purple" [^>]*>([\d]+)岁</div>`)
-var idRe = regexp.MustCompile(`<div class="id" data-v-5b109fc3>ID:\s*([\d]+)</div>`)
+var idRe = regexp.MustCompile(`<div class="id" [^>]*>ID：\s*([\d]+)</div>`)
 var marriageRe = regexp.MustCompile(`<div class="m-btn purple" [^>]*>(.婚)</div>`)
 var xingzuoRe = regexp.MustCompile(`<div class="m-btn purple" [^>]*>(.*座)[^<]+</div>`)
 var heightRe = regexp.MustCompile(`<div class="m-btn purple" [^>]*>([\d]+)cm</div>`)
@@ -30,7 +30,8 @@ func ParserProfile(contents []byte) engine.ParseResult {
 		profile.Age = age
 	}
 
-	profile.Marriage = extractString(contents, marriageRe)
+	profile.Name = extractString(contents, nameRe)
+	profile.Id = extractString(contents, idRe)
 	profile.Marriage = extractString(contents, marriageRe)
 	profile.Xingzuo = extractString(contents, xingzuoRe)
 	height, err := strconv.Atoi(extractString(contents, heightRe))
@@ -42,7 +43,6 @@ func ParserProfile(contents []byte) engine.ParseResult {
 	profile.Car = extractString(contents, carRe)
 	profile.House = extractString(contents, houseRe)
 	profile.BodyType = extractString(contents, bodyTypeRe)
-	profile.Id = extractString(contents, idRe)
 
 	return engine.ParseResult{Items: []interface{}{profile}}
 }
