@@ -15,8 +15,11 @@ func ParseCity(contents []byte) engine.ParseResult {
 		// 将城市下的用户名和用户id放入结构中
 		result.Items = append(result.Items, "user "+string(m[2]))
 		result.Requests = append(result.Requests, engine.Request{
-			Url:        string(m[1]),
-			ParserFunc: engine.NilParser,
+			Url: string(m[1]),
+			// 为了把用户名从上一级传递到下一级可以使用函数闭包
+			ParserFunc: func(contents []byte) engine.ParseResult {
+				return ParserProfile(contents, string(m[2]))
+			},
 		})
 
 	}

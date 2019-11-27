@@ -12,7 +12,7 @@ func TestParserProfile(t *testing.T) {
 	if e != nil {
 		panic(e)
 	}
-	result := ParserProfile(contents)
+	result := ParserProfile(contents, "小凌子")
 	if len(result.Items) != 1 {
 		t.Errorf("items should contain 1 element; but was %v ", result.Items)
 	}

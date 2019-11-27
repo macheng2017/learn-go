@@ -21,16 +21,15 @@ var carRe = regexp.MustCompile(`<div class="m-btn pink" [^>]*>(.买车)</div>`)
 var houseRe = regexp.MustCompile(`<div class="m-btn pink" [^>]*>(.购房)</div>`)
 var bodyTypeRe = regexp.MustCompile(`<div class="m-btn pink" [^>]*>体型:([^<])</div>`)
 
-func ParserProfile(contents []byte) engine.ParseResult {
+func ParserProfile(contents []byte, name string) engine.ParseResult {
 	profile := model.Profile{}
-
 	age, err := strconv.Atoi(extractString(contents, ageRe))
 	if err == nil {
 		// user age
 		profile.Age = age
 	}
 
-	profile.Name = extractString(contents, nameRe)
+	profile.Name = name
 	profile.Id = extractString(contents, idRe)
 	profile.Marriage = extractString(contents, marriageRe)
 	profile.Xingzuo = extractString(contents, xingzuoRe)
