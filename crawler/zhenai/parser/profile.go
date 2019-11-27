@@ -7,19 +7,19 @@ import (
 	"strconv"
 )
 
-var nameRe = regexp.MustCompile(`<h1 class="nickName" [^>]*>([^<]+)</h1>`)
-var ageRe = regexp.MustCompile(`<div class="m-btn purple" [^>]*>([\d]+)岁</div>`)
-var idRe = regexp.MustCompile(`<div class="id" [^>]*>ID：\s*([\d]+)</div>`)
-var marriageRe = regexp.MustCompile(`<div class="m-btn purple" [^>]*>(.婚)</div>`)
-var xingzuoRe = regexp.MustCompile(`<div class="m-btn purple" [^>]*>(.*座)[^<]+</div>`)
-var heightRe = regexp.MustCompile(`<div class="m-btn purple" [^>]*>([\d]+)cm</div>`)
-var workPlaceRe = regexp.MustCompile(`<div class="m-btn purple" [^>]*>工作地:([^<]+)</div>`)
-var incomeRe = regexp.MustCompile(`<div class="m-btn purple" [^>]*>月收入:([^<]+)</div>`)
-var workRe = regexp.MustCompile(`<div class="m-btn purple" [^>]*>在校学生</div>`)
-var hukouRe = regexp.MustCompile(`<div class="m-btn pink" [^>]*>籍贯:([^<]+)</div>`)
-var carRe = regexp.MustCompile(`<div class="m-btn pink" [^>]*>(.买车)</div>`)
-var houseRe = regexp.MustCompile(`<div class="m-btn pink" [^>]*>(.购房)</div>`)
-var bodyTypeRe = regexp.MustCompile(`<div class="m-btn pink" [^>]*>体型:([^<])</div>`)
+var nameRe = regexp.MustCompile(`<h1 class="nickName" .*>([^<]+)</h1>`)
+var ageRe = regexp.MustCompile(`<div class="m-btn purple" .*>([\d]+)岁</div>`)
+var idRe = regexp.MustCompile(`<div class="id" .*>ID：\s*([\d]+)</div>`)
+var marriageRe = regexp.MustCompile(`<div class="m-btn purple" .*>(.婚)</div>`)
+var xingzuoRe = regexp.MustCompile(`<div class="m-btn purple" .*>(.*座)[^<]+</div>`)
+var heightRe = regexp.MustCompile(`<div class="m-btn purple" .*>([\d]+)cm</div>`)
+var workPlaceRe = regexp.MustCompile(`<div class="m-btn purple" .*>工作地:([^<]+)</div>`)
+var incomeRe = regexp.MustCompile(`<div class="m-btn purple" .*>月收入:([^<]+)</div>`)
+var workRe = regexp.MustCompile(`<div class="m-btn purple" .*>在校学生</div>`)
+var hukouRe = regexp.MustCompile(`<div class="m-btn pink" .*>籍贯:([^<]+)</div>`)
+var carRe = regexp.MustCompile(`<div class="m-btn pink" .*>(.买车)</div>`)
+var houseRe = regexp.MustCompile(`<div class="m-btn pink" .*>(.购房)</div>`)
+var bodyTypeRe = regexp.MustCompile(`<div class="m-btn pink" .*>体型:([^<])</div>`)
 
 func ParserProfile(contents []byte, name string) engine.ParseResult {
 	profile := model.Profile{}

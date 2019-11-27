@@ -15,11 +15,20 @@ import (
 )
 
 func Fetch(url string) ([]byte, error) {
-	resp, err := http.Get(url)
-
+	req, err := http.NewRequest("GET", url, nil)
+	// 通过加入header来避免403错误(反爬机制)
 	if err != nil {
 		return nil, err
 	}
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36")
+
+	client := http.Client{
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			fmt.Println("Redirect:", req)
+			return nil
+		},
+	}
+	resp, err := client.Do(req)
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
 		fmt.Println("Error: status code")
