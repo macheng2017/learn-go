@@ -5,7 +5,7 @@ import (
 	"regexp"
 )
 
-const cityRe = `<a href="http://album.zhenai.com/u/([0-9]+)" [^>]*>([^<]+)</a>`
+const cityRe = `<a href="(http://album.zhenai.com/u/[0-9]+)" [^>]*>([^<]+)</a>`
 
 func ParseCity(contents []byte) engine.ParseResult {
 	re := regexp.MustCompile(cityRe)
