@@ -12,16 +12,13 @@ var marriageRe = regexp.MustCompile(`<div data-v-8b1eac0c class="m-btn purple">(
 
 func ParserProfile(contents []byte) engine.ParseResult {
 	profile := model.Profile{}
-	// 在函数内部使用MustCompile比较浪费时间,提到外部
-	match := ageRe.FindSubmatch(contents)
-	if match != nil {
-		age, err := strconv.Atoi(string(match[1]))
-		if err != nil {
-			// user age
-			profile.Age = age
-		}
 
+	age, err := strconv.Atoi(extractString(contents, ageRe))
+	if err != nil {
+		// user age
+		profile.Age = age
 	}
+
 	profile.Marriage = extractString(contents, marriageRe)
 
 }
