@@ -7,13 +7,13 @@ import (
 	"strconv"
 )
 
-const ageRe = `<div data-v-8b1eac0c class="m-btn purple">([\d]+)岁</div>`
-const marriageRe = `<div data-v-8b1eac0c class="m-btn purple">(.婚)</div>`
+var ageRe = regexp.MustCompile(`<div data-v-8b1eac0c class="m-btn purple">([\d]+)岁</div>`)
+var marriageRe = regexp.MustCompile(`<div data-v-8b1eac0c class="m-btn purple">(.婚)</div>`)
 
 func ParserProfile(contents []byte) engine.ParseResult {
 	profile := model.Profile{}
-	re := regexp.MustCompile(ageRe)
-	match := re.FindSubmatch(contents)
+	// 在函数内部使用MustCompile比较浪费时间,提到外部
+	match := ageRe.FindSubmatch(contents)
 	if match != nil {
 		age, err := strconv.Atoi(string(match[1]))
 		if err != nil {
@@ -22,13 +22,17 @@ func ParserProfile(contents []byte) engine.ParseResult {
 		}
 
 	}
+	profile.Marriage = extractString(contents, marriageRe)
 
-	re = regexp.MustCompile(marriageRe)
-	match = re.FindSubmatch(contents)
-	if match != nil {
-		marriage := match[1]
-		profile.Marriage = string(marriage)
+}
 
+// 将重复的代码抽离出来
+func extractString(contents []byte, re *regexp.Regexp) string {
+	// 在函数内部使用MustCompile比较浪费时间,提到外部
+	match := re.FindSubmatch(contents)
+	if len(match) >= 2 {
+		return string(match[1])
+	} else {
+		return ""
 	}
-
 }
