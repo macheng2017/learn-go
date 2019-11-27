@@ -3,6 +3,7 @@ package model
 // 定义一个用户数据结构
 type Profile struct {
 	Name       string
+	Id         string
 	Gender     string
 	Age        int
 	Height     int
@@ -15,4 +16,5 @@ type Profile struct {
 	Xingzuo    string
 	House      string
 	Car        string
+	BodyType   string
 }
