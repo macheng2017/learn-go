@@ -16,7 +16,7 @@ func ParseCityList(contents []byte) engine.ParseResult {
 	re := regexp.MustCompile(cityListRe)
 	all := re.FindAllSubmatch(contents, -1)
 	result := engine.ParseResult{}
-	limit := 10
+
 	for _, m := range all {
 		// 将城市名和URL放入定义的结构当中
 		result.Items = append(result.Items, "city "+string(m[2]))
@@ -24,11 +24,7 @@ func ParseCityList(contents []byte) engine.ParseResult {
 			Url:        string(m[1]),
 			ParserFunc: ParseCity,
 		})
-		// 加入限制,10个城市之后停止
-		limit--
-		if limit == 0 {
-			break
-		}
+
 	}
 	return result
 }
