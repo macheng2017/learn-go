@@ -9,7 +9,8 @@ import (
 func main() {
 	// 包装成SimpleEngine{},将来如果改成ConcurrentEngine{}可以切换过去
 	e := engine.ConcurrentEngine{
-		Scheduler: &scheduler.SimpleScheduler{},
+		Scheduler:   &scheduler.SimpleScheduler{},
+		WorkerCount: 10,
 	}
 	e.Run(engine.Request{
 		Url:        "http://www.zhenai.com/zhenghun",
