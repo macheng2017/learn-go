@@ -11,6 +11,8 @@ type ConcurrentEngine struct {
 // Scheduler 是一个接口
 type Scheduler interface {
 	Submit(r Request)
+	// 配置WorkerChan接口
+	ConfigureMasterWorkerChan(chan Request)
 }
 
 func (e ConcurrentEngine) Run(seeds ...Request) {
@@ -24,7 +26,7 @@ func (e ConcurrentEngine) Run(seeds ...Request) {
 	// 使用 channel进行通信
 	in := make(chan Request)
 	out := make(chan ParseResult)
-
+	e.Scheduler.ConfigureMasterWorkerChan(in)
 	for i := 0; i < e.WorkerCount; i++ {
 		createWorker(in, out)
 	}
