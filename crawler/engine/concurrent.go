@@ -1,6 +1,8 @@
 package engine
 
-import "fmt"
+import (
+	"log"
+)
 
 type ConcurrentEngine struct {
 	// scheduler在这个结构体中定义了
@@ -36,7 +38,7 @@ func (e *ConcurrentEngine) Run(seeds ...Request) {
 	for {
 		result := <-out
 		for _, item := range result.Items {
-			fmt.Printf("Got item: %v", item)
+			log.Printf("Got item: %v", item)
 		}
 		// 将所有的Request 再放进Scheduler
 		for _, request := range result.Requests {
