@@ -27,11 +27,14 @@ var createWorker = func(id int, wg *sync.WaitGroup) worker {
 	return w
 }
 
-var doWork = func(id int, w worker) {
+var doWork = func(id int, done chan bool) {
 
 	for n := range w.in {
 		fmt.Printf("receive value via channel id : %d value %c\n", id, n)
-		w.done()
+		// 这里有个相似的地方,当时开了个goroutine解决了这个问题
+		go func() {
+			done <- true
+		}()
 	}
 
 }
