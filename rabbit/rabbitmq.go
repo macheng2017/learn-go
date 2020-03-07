@@ -25,6 +25,8 @@ type RabbitMQ struct {
 
 // 结构体的函数 即 对象的函数
 // 断开channel和connection
+// 这种在函数前面加上()并声明一个结构体类型的写法可以理解为this,
+// 这个是go语言定义对象中(结构体)定义方法的方式
 func (r *RabbitMQ) Destroy() {
 	r.channel.Close()
 	r.conn.Close()
