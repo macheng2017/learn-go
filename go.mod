@@ -8,6 +8,7 @@ require (
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/json-iterator/go v1.1.8 // indirect
 	github.com/mattn/go-isatty v0.0.10 // indirect
+	github.com/streadway/amqp v0.0.0-20200108173154-1c71cc93ed71
 	github.com/ugorji/go v1.1.7 // indirect
 	go.uber.org/multierr v1.4.0 // indirect
 	go.uber.org/zap v1.12.0
