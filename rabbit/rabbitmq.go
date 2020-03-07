@@ -40,13 +40,7 @@ func (r *RabbitMQ) failOnErr(err error, message string) {
 // 创建结构体基础实例
 func NewRabbitMQ(queueName string, exchange string, key string) *RabbitMQ {
 	//下面就是上面定义的结构体,有点类似json对象
-	return &RabbitMQ{QueueName: queueName, Exchange: exchange, Key: key, Mqurl: MQURL}
-}
-
-// 根据基础实例,通过传入不同的参数创建不同模式的实例
-// 简单模式下rabbitmq实例
-func NewRabbitMQSimple(queueName string) *RabbitMQ {
-	rabbitmq := NewRabbitMQ(queueName, "", "")
+	rabbitmq := &RabbitMQ{QueueName: queueName, Exchange: exchange, Key: key, Mqurl: MQURL}
 	var err error
 	// /创建链接
 	rabbitmq.conn, err = amqp.Dial(rabbitmq.Mqurl)
@@ -54,5 +48,11 @@ func NewRabbitMQSimple(queueName string) *RabbitMQ {
 	rabbitmq.channel, err = rabbitmq.conn.Channel()
 	rabbitmq.failOnErr(err, "获取channel失败")
 	return rabbitmq
+}
 
+// 根据基础实例,通过传入不同的参数创建不同模式的实例
+// 简单模式下rabbitmq实例
+func NewRabbitMQSimple(queueName string) *RabbitMQ {
+	rabbitmq := NewRabbitMQ(queueName, "", "")
+	return rabbitmq
 }
