@@ -52,9 +52,43 @@ func NewRabbitMQ(queueName string, exchange string, key string) *RabbitMQ {
 	return rabbitmq
 }
 
+// step1
 // 根据基础实例,通过传入不同的参数创建不同模式的实例
 // 简单模式下rabbitmq实例
 func NewRabbitMQSimple(queueName string) *RabbitMQ {
 	rabbitmq := NewRabbitMQ(queueName, "", "")
 	return rabbitmq
+}
+
+// step2 简单模式下生产者
+
+func (r *RabbitMQ) PublishSimple(message string) {
+	// 申请队列,如果队列不存在则创建,若存在则直接用
+	// 保证队列存在,消息能发送到队列中
+	_, err := r.channel.QueueDeclare(
+		r.QueueName,
+		// 是否持久化
+		false,
+		// 是否自动删除
+		false,
+		// 是否具有排他性(仅自己可见)
+		false,
+		// 是否阻塞(是否等待响应)
+		false,
+		// 额外属性
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	// 2 发送消息到队列中
+	r.channel.Publish(r.Exchange, r.QueueName,
+		// 若true 根据exchange类型,和routkey规则如果无法找到符合条件的队列,将会退回消息给发送者
+		false,
+		//若为true,当exchange发送消息到队列发现队列没有绑定消费者,则返回给发送者
+		false,
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(message),
+		})
 }
