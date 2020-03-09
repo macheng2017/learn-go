@@ -8,7 +8,7 @@ type treeNode struct {
 }
 
 func (node treeNode) print() {
-	fmt.Print(node.value)
+	fmt.Print(node.value, " ")
 }
 
 // 上面的写法和下面的写法一样就是定义一个普通的方法,只不过在调用时的写法不一样,上面的是go语言特有的方法定义,有一个(值)接受者
@@ -55,6 +55,12 @@ func main() {
 	root.right.left.setValue(999)
 	root.right.left.print() // 999
 
-	//思考一个问题: 既然能返回局部变量的地址,那么这个结构创建在堆上还是栈上?
-
+	// 这里的pRoot存了一个地址,这时候同样可以调用print,而print是一个值接收者,go语言会自动将地址的值取出来传递给了print
+	// 这些细节如果没有认专门讲的话很容易忽略,反正go语言已经帮你处理过了
+	pRoot := &root
+	pRoot.print()
+	pRoot.setValue(10000)
+	pRoot.print()
+	root.print()
+	//999 3 10000 10000
 }
