@@ -20,13 +20,9 @@ func println(node treeNode) {
 // go语言中的接收者种类 值接收者 和 指针接收者
 // go语言中只有值传递,意思是,无论是值传递还是指针传递都是复制了一份传递过去,值直接就是变量的字面值,而指针则是复制了指针中存放的内存地址
 //
-func (node treeNode) setValue(value int) {
+func (node *treeNode) setValue(value int) {
 	node.value = value
-	//值接受者修改的只是副本,可以验证,在函数内部打印出来的是修改过后的999
-	node.print()
-	fmt.Println()
-} //999
-// 0
+}
 
 // 工厂函数
 func createNode(value int) *treeNode {
@@ -54,10 +50,10 @@ func main() {
 	// 两种不同定义调用的不同,
 	root.print()
 	fmt.Println()
-	// 这个是在其他语言中的写法比如java node.js
+	// 修改为指针接收者就可以修改原始struct中的数据,因为指针接收者将指针中存放的地址副本复制了一份,给了函数中的node但两份地址同时指向了
+	// 原始的struct
 	root.right.left.setValue(999)
-	// 而在函数外部输出的是0,说明值接收者的方法,在函数内部改变的只是对struct的一个副本,而对原始struct无任何修改
-	root.right.left.print() // 0
+	root.right.left.print() // 999
 
 	//思考一个问题: 既然能返回局部变量的地址,那么这个结构创建在堆上还是栈上?
 
