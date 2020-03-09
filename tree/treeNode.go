@@ -21,6 +21,10 @@ func println(node treeNode) {
 // go语言中只有值传递,意思是,无论是值传递还是指针传递都是复制了一份传递过去,值直接就是变量的字面值,而指针则是复制了指针中存放的内存地址
 //
 func (node *treeNode) setValue(value int) {
+	if node == nil {
+		fmt.Println("Setting value to nil node, Ignored")
+		return
+	}
 	node.value = value
 }
 
@@ -57,10 +61,13 @@ func main() {
 
 	// 这里的pRoot存了一个地址,这时候同样可以调用print,而print是一个值接收者,go语言会自动将地址的值取出来传递给了print
 	// 这些细节如果没有认专门讲的话很容易忽略,反正go语言已经帮你处理过了
-	pRoot := &root
+	var pRoot *treeNode
+	pRoot.setValue(300)
+	pRoot = &root
+	pRoot.setValue(120)
 	pRoot.print()
-	pRoot.setValue(10000)
-	pRoot.print()
-	root.print()
-	//999 3 10000 10000
+	// panic: runtime error: invalid memory address or nil pointer dereference
+	// 3
+	//999 Setting value to nil node, Ignored
+	//120
 }
