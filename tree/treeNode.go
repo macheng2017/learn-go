@@ -12,8 +12,16 @@ func (node treeNode) print() {
 }
 
 // 上面的写法和下面的写法一样就是定义一个普通的方法,只不过在调用时的写法不一样,上面的是go语言特有的方法定义,有一个(值)接受者
+
 func println(node treeNode) {
 	fmt.Println(node.value)
+}
+
+// go语言中的接收者种类 值接收者 和 指针接收者
+// go语言中只有值传递,意思是,无论是值传递还是指针传递都是复制了一份传递过去,值直接就是变量的字面值,而指针则是复制了指针中存放的内存地址
+//
+func (node treeNode) setValue(value int) {
+	node.value = value
 }
 
 // 工厂函数
@@ -41,8 +49,10 @@ func main() {
 	root.left.right = createNode(8)
 	// 两种不同定义调用的不同,
 	root.print()
+	fmt.Println()
 	// 这个是在其他语言中的写法比如java node.js
-	println(root)
+	root.right.left.setValue(999)
+	root.right.left.print() // 0
 
 	//思考一个问题: 既然能返回局部变量的地址,那么这个结构创建在堆上还是栈上?
 
