@@ -1,4 +1,4 @@
-package rabbit
+package RabbitMQ
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 )
 
 // [streadway/amqp: Go client for AMQP 0.9.1](https://github.com/streadway/amqp)
-const MQURL = "amqp://macheng:machenguser@192.168.99.100:5672/macheng"
+const MQURL = "amqp://guest:guest@192.168.99.100:5672/macheng"
 
 type RabbitMQ struct {
 	conn *amqp.Connection
@@ -91,4 +91,58 @@ func (r *RabbitMQ) PublishSimple(message string) {
 			ContentType: "text/plain",
 			Body:        []byte(message),
 		})
+}
+
+func (r *RabbitMQ) ConsumeSimple() {
+	// 申请队列,如果队列不存在则创建,若存在则直接用
+	// 保证队列存在,消息能发送到队列中
+	_, err := r.channel.QueueDeclare(
+		r.QueueName,
+		// 是否持久化
+		false,
+		// 是否自动删除
+		false,
+		// 是否具有排他性(仅自己可见)
+		false,
+		// 是否阻塞(是否等待响应)
+		false,
+		// 额外属性
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	// 接收消息
+	msgs, err := r.channel.Consume(
+		r.QueueName,
+		// 用来区分多个消费者
+		"",
+		// 是否自动应答
+		true,
+		//是否具有排他性
+		false,
+		// 如果设置为true,表示不能将同一个connection中发送的消息传递给这个connection中的消费者
+		false,
+		// 是否阻塞
+		false,
+		nil,
+	)
+	if err != nil {
+		fmt.Println(err)
+	}
+	forever := make(chan bool)
+
+	// 开启协程处理消息
+	go func() {
+		for d := range msgs {
+			// 实现我们要处理的逻辑函数
+			log.Printf("Received a message: %s", d.Body)
+			fmt.Printf("%v", d)
+
+		}
+	}()
+
+	log.Printf("[*] Waiting for message, To exit press CTRL + C ")
+	<-forever
+
 }
