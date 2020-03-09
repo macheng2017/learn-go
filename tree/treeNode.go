@@ -28,6 +28,16 @@ func (node *treeNode) setValue(value int) {
 	node.value = value
 }
 
+// 遍历树
+func (node *treeNode) traverse() {
+	if node == nil {
+		return
+	}
+	node.left.traverse()
+	node.print()
+	node.right.traverse()
+}
+
 // 工厂函数
 func createNode(value int) *treeNode {
 	// 在c++ 中return 一个函数中,这个是局部变量地址,会导致程序崩溃,在go中局部变量地址也是可以使用的
@@ -58,16 +68,6 @@ func main() {
 	// 原始的struct
 	root.right.left.setValue(999)
 	root.right.left.print() // 999
-
-	// 这里的pRoot存了一个地址,这时候同样可以调用print,而print是一个值接收者,go语言会自动将地址的值取出来传递给了print
-	// 这些细节如果没有认专门讲的话很容易忽略,反正go语言已经帮你处理过了
-	var pRoot *treeNode
-	pRoot.setValue(300)
-	pRoot = &root
-	pRoot.setValue(120)
-	pRoot.print()
-	// panic: runtime error: invalid memory address or nil pointer dereference
-	// 3
-	//999 Setting value to nil node, Ignored
-	//120
+	fmt.Println()
+	root.traverse()
 }
