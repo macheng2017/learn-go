@@ -22,7 +22,11 @@ func println(node treeNode) {
 //
 func (node treeNode) setValue(value int) {
 	node.value = value
-}
+	//值接受者修改的只是副本,可以验证,在函数内部打印出来的是修改过后的999
+	node.print()
+	fmt.Println()
+} //999
+// 0
 
 // 工厂函数
 func createNode(value int) *treeNode {
@@ -52,6 +56,7 @@ func main() {
 	fmt.Println()
 	// 这个是在其他语言中的写法比如java node.js
 	root.right.left.setValue(999)
+	// 而在函数外部输出的是0,说明值接收者的方法,在函数内部改变的只是对struct的一个副本,而对原始struct无任何修改
 	root.right.left.print() // 0
 
 	//思考一个问题: 既然能返回局部变量的地址,那么这个结构创建在堆上还是栈上?
