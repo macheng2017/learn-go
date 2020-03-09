@@ -137,7 +137,7 @@ func (r *RabbitMQ) ConsumeSimple() {
 		for d := range msgs {
 			// 实现我们要处理的逻辑函数
 			log.Printf("Received a message: %s", d.Body)
-			fmt.Printf("%v", d)
+			//fmt.Printf("%v", d)
 
 		}
 	}()
