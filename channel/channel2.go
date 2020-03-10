@@ -8,28 +8,31 @@ import (
 	"time"
 )
 
-func worker1(id int, c chan int) {
-	//注意 这里开了10个goroutine向文件中写入数据
-	file, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE, 0755)
-	defer file.Close()
-	writer := bufio.NewWriter(file)
-	defer writer.Flush()
-	for {
-		fmt.Printf("Worker %d received %d\n", id, <-c)
+func createWorker1(id int) chan int {
+	// 在worker内部建立channel,并返回出去给别人使用
+	c := make(chan int)
 
+	go func() {
+		// 为什么openFile定义到goroutine外面就没有写入了呢?
+		file, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE, 0755)
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		fmt.Fprintf(writer, "Worker %d received %d\n", id, <-c)
-	}
+		defer file.Close()
+		writer := bufio.NewWriter(file)
+		defer writer.Flush()
+		for {
+			fmt.Printf("Worker %d received %d\n", id, <-c)
+			fmt.Fprintf(writer, "Worker %d received %d\n", id, <-c)
+		}
+	}()
+	return c
 }
 func chanDemo() {
 	// 建立10个worker并为每个worker配置一个自己的channel
 	var channels [10]chan int
 	for i := 0; i < 10; i++ {
-		channels[i] = make(chan int)
-		go worker1(i, channels[i])
+		channels[i] = createWorker1(i)
 	}
 
 	go func() {
