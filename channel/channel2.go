@@ -15,12 +15,9 @@ func worker2(id int, c <-chan int) {
 	//defer file.Close()
 	//writer := bufio.NewWriter(file)
 	//defer writer.Flush()
-	for {
-		// 使用这种方式判断发送方channel是否close,否则会有空串
-		n, ok := <-c
-		if !ok {
-			break
-		}
+	// 使用range 接收 channel的数据,同时过滤空值
+	for n := range c {
+
 		fmt.Printf("Worker %d received %d\n", id, n)
 		//fmt.Fprintf(writer, "Worker %d received %c\n", id, <-c)
 	}
