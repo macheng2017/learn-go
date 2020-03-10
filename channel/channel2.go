@@ -63,6 +63,8 @@ func bufferedChannel2() {
 	c <- 'b'
 	c <- 'c'
 	go worker2(0, c)
+
+	// 解决不使用sleep,让消费者工作完成之后通知外面
 	time.Sleep(time.Second)
 }
 
