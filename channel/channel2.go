@@ -8,7 +8,8 @@ import (
 	"time"
 )
 
-func createWorker1(id int) chan int {
+// 定义channel只能收数据的修饰(告诉调用者只能收数据)
+func createWorker1(id int) chan<- int {
 	// 在worker内部建立channel,并返回出去给别人使用
 	c := make(chan int)
 
@@ -29,8 +30,8 @@ func createWorker1(id int) chan int {
 	return c
 }
 func chanDemo() {
-	// 建立10个worker并为每个worker配置一个自己的channel
-	var channels [10]chan int
+	// 定义channel只能收数据的修饰(告诉调用者只能收数据)
+	var channels [10]chan<- int
 	for i := 0; i < 10; i++ {
 		channels[i] = createWorker1(i)
 	}
@@ -43,7 +44,10 @@ func chanDemo() {
 			if i%10 == 0 {
 				i = 0
 			}
+			// 只能向上面定义的channel中发数据
 			channels[i] <- count
+			// 这里如果向外发数据就会报错
+			// n := <-channels[i] //invalid operation: <-channels[i] (receive from send-only type chan<- int)
 		}
 	}()
 
