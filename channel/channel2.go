@@ -12,8 +12,11 @@ type work struct {
 func (work *work) doWorker2(id int) {
 	for n := range work.c {
 		fmt.Printf("Worker %d received %c\n", id, n)
-		// 通过channel通知外部的
-		work.done <- true
+		// 不是很好的解决办法是,再开一个goroutine
+		go func() {
+			work.done <- true
+		}()
+
 	}
 }
 func createWorker1(id int) work {
@@ -30,8 +33,10 @@ func chanDemo() {
 
 	for i, work := range works {
 		work.c <- 'a' + i
-		//这个错误的原因是,当这个循环完毕之后,消费者对10个channel都发过了一次通信,但是处于没人接受状态
-		// 而这时会进入下个循环,当消费者再次处理完第一个又对channel发一次通信,这时候就报错了,出现deadlock error
+		//这个错误的原因是,所有的channel [发送] 都是阻塞式(block),当发送一个信息,必须有人去收,
+		//的当这个循环完毕之后,消费者(doWorker2函数)对10个channel都发过了一次通信(发送了一次done),但是处于没人接受状态
+		// 而这时程序成功执行了for循环小写部分,然后会进入下个循环,当消费者再次处理完第一个并又对channel发送一次通信,
+		//这时候就报错了,出现deadlock error (这个错误是循环等待导致的)
 	}
 
 	for i, work := range works {
