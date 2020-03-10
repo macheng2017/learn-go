@@ -1,13 +1,27 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"log"
+	"os"
 	"time"
 )
 
 func worker1(id int, c chan int) {
+	//注意 这里开了10个goroutine向文件中写入数据
+	file, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE, 0755)
+	defer file.Close()
+	writer := bufio.NewWriter(file)
+	defer writer.Flush()
 	for {
 		fmt.Printf("Worker %d received %d\n", id, <-c)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Fprintf(writer, "Worker %d received %d\n", id, <-c)
 	}
 }
 func chanDemo() {
@@ -19,10 +33,14 @@ func chanDemo() {
 	}
 
 	go func() {
-		i := 0
+		var i, count int
 		for {
 			i++
-			channels[0] <- i
+			count++
+			if i%10 == 0 {
+				i = 0
+			}
+			channels[i] <- count
 		}
 	}()
 
