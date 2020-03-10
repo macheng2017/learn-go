@@ -12,11 +12,7 @@ type work struct {
 func (work *work) doWorker2(id int) {
 	for n := range work.c {
 		fmt.Printf("Worker %d received %c\n", id, n)
-		// 不是很好的解决办法是,再开一个goroutine
-		go func() {
-			work.done <- true
-		}()
-
+		work.done <- true
 	}
 }
 func createWorker1(id int) work {
@@ -38,27 +34,18 @@ func chanDemo() {
 		// 而这时程序成功执行了for循环小写部分,然后会进入下个循环,当消费者再次处理完第一个并又对channel发送一次通信,
 		//这时候就报错了,出现deadlock error (这个错误是循环等待导致的)
 	}
-
+	for _, worker := range works {
+		<-worker.done
+	}
+	// 这样是第二种方式,先并发的执行完第一组,然后这边收到通信结束
+	// 在执行下一组
 	for i, work := range works {
 		work.c <- 'A' + i
 	}
-	// wait for all of them
+
 	for _, worker := range works {
 		<-worker.done
-		<-worker.done
 	}
-
-	// Worker 3 received d
-	//Worker 0 received a
-	//Worker 4 received e
-	//Worker 6 received g
-	//Worker 5 received f
-	//Worker 8 received i
-	//Worker 1 received b
-	//Worker 2 received c
-	//Worker 7 received h
-	//Worker 9 received j
-	//fatal error: all goroutines are asleep - deadlock!
 }
 
 func main() {
