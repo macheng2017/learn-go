@@ -23,7 +23,7 @@ func createWorker1(id int, wg *sync.WaitGroup) work {
 		c:  make(chan int),
 		// 仔细琢磨下这里这样写的好处
 		// 通过函数式编程包装下之后将waitGroup抽象掉了放在createWorker中调用时配置
-
+		// 这里终于有点理解了"函数式编程定义的是一个过程"的含义了
 		done: func() {
 			wg.Done()
 		}}
