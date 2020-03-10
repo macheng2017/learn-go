@@ -1,10 +1,7 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"log"
-	"os"
 	"time"
 )
 
@@ -15,16 +12,17 @@ func createWorker1(id int) chan<- int {
 
 	go func() {
 		// 为什么openFile定义到goroutine外面就没有写入了呢?
-		file, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE, 0755)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer file.Close()
-		writer := bufio.NewWriter(file)
-		defer writer.Flush()
+		// 还有一个问题就是,当数据量很小的时候不能写入文件这是怎么回事?
+		//file, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE, 0755)
+		//if err != nil {
+		//	log.Fatal(err)
+		//}
+		//defer file.Close()
+		//writer := bufio.NewWriter(file)
+		//defer writer.Flush()
 		for {
-			fmt.Printf("Worker %d received %d\n", id, <-c)
-			fmt.Fprintf(writer, "Worker %d received %d\n", id, <-c)
+			fmt.Printf("Worker %d received %c\n", id, <-c)
+			//fmt.Fprintf(writer, "Worker %d received %c\n", id, <-c)
 		}
 	}()
 	return c
@@ -36,20 +34,16 @@ func chanDemo() {
 		channels[i] = createWorker1(i)
 	}
 
-	go func() {
-		var i, count int
-		for {
-			i++
-			count++
-			if i%10 == 0 {
-				i = 0
-			}
-			// 只能向上面定义的channel中发数据
-			channels[i] <- count
-			// 这里如果向外发数据就会报错
-			// n := <-channels[i] //invalid operation: <-channels[i] (receive from send-only type chan<- int)
-		}
-	}()
+	for i := 0; i < 10; i++ {
+		// 只能向上面定义的channel中发数据
+		channels[i] <- 'a' + i
+		// 这里如果向外发数据就会报错
+		// n := <-channels[i] //invalid operation: <-channels[i] (receive from send-only type chan<- int)
+	}
+
+	for i := 0; i < 10; i++ {
+		channels[i] <- 'A' + i
+	}
 
 	// 1. 为什么把生产者放到消费者前面会导致死锁问题
 	// 2. 为什么将生产者放到goroutine当中会没有结果
@@ -61,5 +55,5 @@ func chanDemo() {
 
 func main() {
 	chanDemo()
-	time.Sleep(time.Second)
+	time.Sleep(time.Second * 2)
 } //fatal error: all goroutines are asleep - deadlock!
