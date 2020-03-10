@@ -16,7 +16,12 @@ func worker2(id int, c <-chan int) {
 	//writer := bufio.NewWriter(file)
 	//defer writer.Flush()
 	for {
-		fmt.Printf("Worker %d received %c\n", id, <-c)
+		// 使用这种方式判断发送方channel是否close,否则会有空串
+		n, ok := <-c
+		if !ok {
+			break
+		}
+		fmt.Printf("Worker %d received %d\n", id, n)
 		//fmt.Fprintf(writer, "Worker %d received %c\n", id, <-c)
 	}
 }
@@ -64,7 +69,20 @@ func bufferedChannel2() {
 	time.Sleep(time.Second)
 }
 
+// channel close 发送方close 通知接收方,没有新数据了
+func channelClose1() {
+	c := make(chan int, 3)
+	go worker2(0, c)
+	c <- 'a'
+	c <- 'b'
+	c <- 'c'
+	c <- 'd'
+	close(c)
+	time.Sleep(time.Second)
+}
+
 func main() {
 	//chanDemo()
-	bufferedChannel2()
+	//bufferedChannel2()
+	channelClose1()
 } //fatal error: all goroutines are asleep - deadlock!
