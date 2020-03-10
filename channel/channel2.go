@@ -18,8 +18,10 @@ func chanDemo() {
 	}()
 
 	go func() {
+		i := 0
 		for {
-			c <- 1
+			i++
+			c <- i
 		}
 	}()
 
