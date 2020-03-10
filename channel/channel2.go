@@ -5,23 +5,24 @@ import (
 	"time"
 )
 
+func worker1(id int, c chan int) {
+	for {
+		fmt.Printf("Worker %d received %d\n", id, <-c)
+	}
+}
 func chanDemo() {
-	// define the channel 'c' and used make to init
-	c := make(chan int)
-	// channel是goroutine与goroutine之间的通信,main是一个goroutine,需要发送到另外一个goroutine接收
-	// 现在是闭包
-	go func(c chan int) {
-		for {
-			n := <-c
-			fmt.Println(n)
-		}
-	}(c)
+	// 建立10个worker并为每个worker配置一个自己的channel
+	var channels [10]chan int
+	for i := 0; i < 10; i++ {
+		channels[i] = make(chan int)
+		go worker1(i, channels[i])
+	}
 
 	go func() {
 		i := 0
 		for {
 			i++
-			c <- i
+			channels[0] <- i
 		}
 	}()
 
