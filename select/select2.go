@@ -21,6 +21,7 @@ var worker1 = func(id int, c chan int) {
 	// range 可以用于遍历 slice 例如 for i := range []byte(s) {}
 	for n := range c {
 		// 避免接收空channel
+		time.Sleep(time.Second * 2)
 		fmt.Printf("receive value via channel id : %d value %d\n", id, n)
 	}
 }
@@ -56,6 +57,7 @@ func main() {
 		if hasValue {
 			activeWorker = worker
 		}
+		// 还有一个问题: 如果生产者速度太快了,消费者速度太慢,有些数据就会被跳过去?
 		select {
 		case n = <-c1:
 			hasValue = true
@@ -65,6 +67,12 @@ func main() {
 			hasValue = false
 		}
 
-	}
+	} //receive value via channel id : 0 value 0
+	//receive value via channel id : 0 value 3
+	//receive value via channel id : 0 value 6
+	//receive value via channel id : 0 value 8
+	//receive value via channel id : 0 value 9
+	//receive value via channel id : 0 value 12
+	//receive value via channel id : 0 value 15
 
 }
