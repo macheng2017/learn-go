@@ -68,6 +68,9 @@ func main() {
 			values = append(values, n)
 		case activeWorker <- activeValue:
 			values = values[1:]
+			// 生产者延迟时间超过800 毫秒打印timeout
+		case <-time.After(800 * time.Millisecond):
+			fmt.Printf("timeout\n")
 		case <-after:
 			fmt.Printf("bye")
 			return
