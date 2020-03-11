@@ -42,18 +42,27 @@ func generator1() chan int {
 func main() {
 	// 调度器
 	var c1, c2 = generator1(), generator1()
-	w := createWorker1(0)
+	// 利用nil channel 的性质改造select,即当 activeWork channel 为 nil 时select是阻塞的直到其有值
+	worker := createWorker1(0)
 	//n1 := <-c1
 	//n2 := <-c2
 	// 现在的问题是,我想让这两个channel谁先到谁先收数据,怎么解决?
-
+	n := 0
+	// 定义一个flag
+	hasValue := false
 	for {
-		n := 0
-		// 这样改就不会阻塞了,但是会一直打印0,因为前两个case需要一段时间准备才会有值
+		//即当 activeWork channel 为 nil 时select是阻塞的直到其有值
+		var activeWorker chan<- int
+		if hasValue {
+			activeWorker = worker
+		}
 		select {
 		case n = <-c1:
+			hasValue = true
 		case n = <-c2:
-		case w <- n:
+			hasValue = true
+		case activeWorker <- n:
+			hasValue = false
 		}
 
 	}
