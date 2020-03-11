@@ -48,14 +48,12 @@ func main() {
 	// 现在的问题是,我想让这两个channel谁先到谁先收数据,怎么解决?
 
 	for {
+		n := 0
+		// 这样改就不会阻塞了,但是会一直打印0,因为前两个case需要一段时间准备才会有值
 		select {
-		case n := <-c1:
-			// 这里收一个数之后,做的事情会阻塞,怎么解决这个问题呢?
-			w <- n
-		case n := <-c2:
-			w <- n
-			//default:
-			//	fmt.Println("No value received")
+		case n = <-c1:
+		case n = <-c2:
+		case w <- n:
 		}
 
 	}
