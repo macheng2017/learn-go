@@ -49,22 +49,23 @@ func main() {
 	//n2 := <-c2
 	// 现在的问题是,我想让这两个channel谁先到谁先收数据,怎么解决?
 	n := 0
-	// 定义一个flag
-	hasValue := false
+	var values []int
 	for {
 		//即当 activeWork channel 为 nil 时select是阻塞的直到其有值
 		var activeWorker chan<- int
-		if hasValue {
+		var activeValue int
+		if len(values) > 0 {
 			activeWorker = worker
+			activeValue = values[0]
 		}
 		// 还有一个问题: 如果生产者速度太快了,消费者速度太慢,有些数据就会被跳过去?
 		select {
 		case n = <-c1:
-			hasValue = true
+			values = append(values, n)
 		case n = <-c2:
-			hasValue = true
-		case activeWorker <- n:
-			hasValue = false
+			values = append(values, n)
+		case activeWorker <- activeValue:
+			values = values[1:]
 		}
 
 	} //receive value via channel id : 0 value 0
