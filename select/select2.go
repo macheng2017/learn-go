@@ -21,7 +21,7 @@ var worker1 = func(id int, c chan int) {
 	// range 可以用于遍历 slice 例如 for i := range []byte(s) {}
 	for n := range c {
 		// 避免接收空channel
-		time.Sleep(time.Second * 2)
+		time.Sleep(time.Second)
 		fmt.Printf("receive value via channel id : %d value %d\n", id, n)
 	}
 }
@@ -48,6 +48,8 @@ func main() {
 	//n1 := <-c1
 	//n2 := <-c2
 	// 现在的问题是,我想让这两个channel谁先到谁先收数据,怎么解决?
+	// 定时器的用法,定时退出
+	after := time.After(time.Second * 10)
 	n := 0
 	var values []int
 	for {
@@ -66,14 +68,10 @@ func main() {
 			values = append(values, n)
 		case activeWorker <- activeValue:
 			values = values[1:]
+		case <-after:
+			fmt.Printf("bye")
+			return
 		}
-
-	} //receive value via channel id : 0 value 0
-	//receive value via channel id : 0 value 3
-	//receive value via channel id : 0 value 6
-	//receive value via channel id : 0 value 8
-	//receive value via channel id : 0 value 9
-	//receive value via channel id : 0 value 12
-	//receive value via channel id : 0 value 15
+	}
 
 }
