@@ -6,8 +6,10 @@ import (
 )
 
 type work struct {
-	id   int
-	c    chan int
+	id int
+	c  chan int
+	// 在这里定义的函数,相当于建立了一个通道,至于通道里放什么
+	// 可以根据调用者实际情况由调用自己决定(函数式编程定义的是一个过程)
 	done func()
 }
 
@@ -25,6 +27,7 @@ func createWorker1(id int, wg *sync.WaitGroup) work {
 		// 通过函数式编程包装下之后将waitGroup抽象掉了放在createWorker中调用时配置
 		// 这里终于有点理解了"函数式编程定义的是一个过程"的含义了
 		done: func() {
+			// 由函数调用者自己决定
 			wg.Done()
 		}}
 	go work.doWorker2()
