@@ -50,6 +50,8 @@ func main() {
 	// 现在的问题是,我想让这两个channel谁先到谁先收数据,怎么解决?
 	// 定时器的用法,定时退出
 	after := time.After(time.Second * 10)
+	// 每隔1秒检查队列的长度
+	tick := time.Tick(time.Second)
 	n := 0
 	var values []int
 	for {
@@ -71,6 +73,8 @@ func main() {
 			// 生产者延迟时间超过800 毫秒打印timeout
 		case <-time.After(800 * time.Millisecond):
 			fmt.Printf("timeout\n")
+		case <-tick:
+			fmt.Printf("Quene %d\n", len(values))
 		case <-after:
 			fmt.Printf("bye")
 			return
