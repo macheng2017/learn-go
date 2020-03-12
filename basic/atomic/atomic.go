@@ -17,9 +17,17 @@ type atomicInt struct {
 // 2. 获取自己的值
 func (a *atomicInt) increment() {
 	// 在数据读写的时候加上锁
-	a.lock.Lock()
-	defer a.lock.Unlock()
-	a.value++
+
+	// 如果想对一块代码加锁可以使用'立即执行函数'(js当中的概念) + 锁 来保护
+	// 注意:这样不是这个函数在起作用,而是立即执行函数和lock配合使用 其中定义的defer会在函数体执行完毕之前会执行defer解锁
+	// 相当于defer借助了立即执行函数的作用域
+	fmt.Println("safe increment")
+	func() {
+		a.lock.Lock()
+		defer a.lock.Unlock()
+		a.value++
+	}()
+
 }
 
 func (a *atomicInt) get() int {
