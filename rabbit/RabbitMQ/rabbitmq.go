@@ -8,7 +8,8 @@ import (
 )
 
 // [streadway/amqp: Go client for AMQP 0.9.1](https://github.com/streadway/amqp)
-const MQURL = "amqp://guest:guest@192.168.99.100:5672/macheng"
+//const MQURL = "amqp://guest:guest@192.168.99.100:5672/macheng"
+const MQURL = "amqp://guest:guest@127.0.0.1:5672/macheng"
 
 type RabbitMQ struct {
 	conn *amqp.Connection
@@ -144,5 +145,51 @@ func (r *RabbitMQ) ConsumeSimple() {
 
 	log.Printf("[*] Waiting for message, To exit press CTRL + C ")
 	<-forever
+
+}
+
+//订阅模式下创建RabbitMQ实例
+func NewRabbitMQPubSub(exchangName string) *RabbitMQ {
+	rabbitMQ := NewRabbitMQ("", exchangName, "")
+	var err error
+	// 获取连接
+	rabbitMQ.conn, err = amqp.Dial(rabbitMQ.Mqurl)
+	rabbitMQ.failOnErr(err, "failed to connect rabbitmq")
+	rabbitMQ.channel, err = rabbitMQ.conn.Channel()
+	rabbitMQ.failOnErr(err, "failed to open a channel")
+	return rabbitMQ
+}
+
+// 订阅模式下生产
+//[RabbitMQ tutorial - Publish/Subscribe — RabbitMQ](https://www.rabbitmq.com/tutorials/tutorial-three-go.html)
+func (r *RabbitMQ) PublishPub(message string) {
+	// 1.声明一个交换机
+	err := r.channel.ExchangeDeclare(
+		r.Exchange,
+		// 定义交换机的类型 广播类型
+		"fanout",
+		true,
+		false,
+		//true表示这个exchange不可以被client用来推送消息,仅用来进行exchanges之间的绑定
+		false,
+		false,
+		nil,
+	)
+	r.failOnErr(err, "failed to declare an exchange")
+	// 2. 发送消息
+	r.channel.Publish(
+		r.Exchange,
+		"",
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(message),
+		})
+}
+
+// 订阅模式下消费
+
+func (r *RabbitMQ) ReceivePub() {
 
 }
