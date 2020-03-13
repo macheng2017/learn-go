@@ -8,8 +8,9 @@ import (
 )
 
 // [streadway/amqp: Go client for AMQP 0.9.1](https://github.com/streadway/amqp)
-//const MQURL = "amqp://guest:guest@192.168.99.100:5672/macheng"
-const MQURL = "amqp://guest:guest@127.0.0.1:5672/macheng"
+const MQURL = "amqp://guest:guest@192.168.99.100:5672/macheng"
+
+//const MQURL = "amqp://guest:guest@127.0.0.1:5672/macheng"
 
 type RabbitMQ struct {
 	conn *amqp.Connection
@@ -213,13 +214,41 @@ func (r *RabbitMQ) ReceiveSub() {
 		// 是否自动删除
 		false,
 		// 是否具有排他性(仅自己可见)
-		false,
+		true,
 		// 是否阻塞(是否等待响应)
 		false,
 		// 额外属性
 		nil,
 	)
-	if err != nil {
-		log.Println(err)
-	}
+	r.failOnErr(err, "Failed to declare q queue")
+
+	// 绑定队列到 exchange 中
+	r.channel.QueueBind(
+		q.Name,
+		// 在pub/sub模式下,这里的key要为空
+		"",
+		r.Exchange,
+		false,
+		nil,
+	)
+	// 消费信息
+	messages, err := r.channel.Consume(
+		q.Name,
+		"",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+
+	forever := make(chan bool)
+
+	go func() {
+		for d := range messages {
+			log.Printf("Received a message: %s", d.Body)
+		}
+	}()
+	fmt.Println("退出请按CTRL+C\n")
+	<-forever
 }
