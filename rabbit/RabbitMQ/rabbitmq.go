@@ -190,6 +190,36 @@ func (r *RabbitMQ) PublishPub(message string) {
 
 // 订阅模式下消费
 
-func (r *RabbitMQ) ReceivePub() {
-
+func (r *RabbitMQ) ReceiveSub() {
+	// 1.声明一个交换机
+	err := r.channel.ExchangeDeclare(
+		r.Exchange,
+		// 定义交换机的类型 广播类型
+		"fanout",
+		true,
+		false,
+		//true表示这个exchange不可以被client用来推送消息,仅用来进行exchanges之间的绑定
+		false,
+		false,
+		nil,
+	)
+	r.failOnErr(err, "failed to declare an exchange")
+	//2. 声明一个队列
+	q, err := r.channel.QueueDeclare(
+		// "" 随机生成队列
+		"",
+		// 是否持久化
+		false,
+		// 是否自动删除
+		false,
+		// 是否具有排他性(仅自己可见)
+		false,
+		// 是否阻塞(是否等待响应)
+		false,
+		// 额外属性
+		nil,
+	)
+	if err != nil {
+		log.Println(err)
+	}
 }
