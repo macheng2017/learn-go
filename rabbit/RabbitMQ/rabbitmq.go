@@ -250,5 +250,7 @@ func (r *RabbitMQ) ReceiveSub() {
 		}
 	}()
 	fmt.Println("退出请按CTRL+C\n")
+	// 这里的channel的作用猜测是用来阻塞goroutine,挂起程序让之前启动的goroutine能一直运行下去,
+	// 因为随着main这个goroutine结束上面的也就结束了
 	<-forever
 }
