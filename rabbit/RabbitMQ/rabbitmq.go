@@ -361,3 +361,112 @@ func (r *RabbitMQ) ReceiveRouting() {
 	<-forever
 
 }
+
+//路由模式
+// 创建rabbitmq实例
+func NewRabbitMTopic(exchangeName string, routingKey string) *RabbitMQ {
+	//创建rabbitmq实例
+	rabbitMQ := NewRabbitMQ("", exchangeName, routingKey)
+	var err error
+	//获取connection
+	rabbitMQ.conn, err = amqp.Dial(rabbitMQ.Mqurl)
+	// 获取channel
+	rabbitMQ.channel, err = rabbitMQ.conn.Channel()
+	rabbitMQ.failOnErr(err, "failed to open a channel ")
+	return rabbitMQ
+}
+func (r *RabbitMQ) PublishTopic(message string) {
+	//1.尝试创建交换机
+	err := r.channel.ExchangeDeclare(
+		r.Exchange,
+		// 改成topic
+		"topic",
+		true,
+		false,
+		false,
+		false,
+		nil)
+	r.failOnErr(err, "Failed to declare an exchange")
+	// 发送消息
+	err = r.channel.Publish(
+		r.Exchange,
+		// 要设置
+		r.Key,
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(message),
+		},
+	)
+	r.failOnErr(err, "Failed to send messages")
+
+}
+
+//
+//话题模式下接收消息
+// 要注意key,规则
+// 其中"*"用于匹配一个单词,"#"用于匹配多个单词(可以是零个)
+// 匹配mac.* 表示匹配mac.hello, 但是mac.hello.one需要用mac.#才能匹配到
+func (r *RabbitMQ) ReceiveTopic() {
+	//1.尝试创建交换机
+	err := r.channel.ExchangeDeclare(
+		r.Exchange,
+		// 改成topic
+		"topic",
+		true,
+		false,
+		false,
+		false,
+		nil)
+	r.failOnErr(err, "Failed to declare an exchange")
+	//2. 声明一个队列
+	q, err := r.channel.QueueDeclare(
+		// "" 随机生成队列
+		"",
+		// 是否持久化
+		false,
+		// 是否自动删除
+		false,
+		// 是否具有排他性(仅自己可见)
+		true,
+		// 是否阻塞(是否等待响应)
+		false,
+		// 额外属性
+		nil,
+	)
+	r.failOnErr(err, "Failed to declare q queue")
+
+	// 绑定队列到 exchange 中
+	r.channel.QueueBind(
+		q.Name,
+		// 需要绑定key
+		r.Key,
+		r.Exchange,
+		false,
+		nil,
+	)
+	// 消费信息
+	messages, err := r.channel.Consume(
+		q.Name,
+		"",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+
+	forever := make(chan bool)
+
+	go func() {
+		for d := range messages {
+			log.Printf("Received a message: %s", d.Body)
+		}
+	}()
+	fmt.Println("退出请按CTRL+C\n")
+	// 这里的channel的作用猜测是用来阻塞goroutine,挂起程序让之前启动的goroutine能一直运行下去,
+	// 因为随着main这个goroutine结束上面的也就结束了
+	<-forever
+
+}
