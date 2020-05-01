@@ -18,15 +18,10 @@ func main() {
 	//	}
 	//
 	//}
+
 	var fileList []string
-	err := filepath.Walk("D:/", func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		fileList = append(fileList, path)
-		//fmt.Printf("path %s size %d \n", path, info.Size())
-		return nil
-	})
+	err := filepath.Walk("D:/", visit(&fileList))
+
 	if err != nil {
 		log.Println(err)
 	}
@@ -34,4 +29,17 @@ func main() {
 		fmt.Printf("path %s  \n", s)
 	}
 
+}
+
+// 柯里化
+func visit(fileList *[]string) filepath.WalkFunc {
+	return func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		// 不要在for循环当中做io操作,况且是递归
+		*fileList = append(*fileList, path)
+		//fmt.Printf("path %s size %d \n", path, info.Size())
+		return nil
+	}
 }
