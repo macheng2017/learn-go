@@ -13,7 +13,11 @@ func work1() chan int {
 		for {
 			i++
 			time.Sleep(time.Duration(rand.Intn(1500)) * time.Millisecond)
-			c <- i
+			// 这样当select 收到通信的时候就终止了goroutine
+			if i == 20 {
+				c <- i
+			}
+			fmt.Println(i)
 		}
 	}()
 	return c
@@ -21,16 +25,14 @@ func work1() chan int {
 
 func main() {
 	var c1, c2 = work1(), work1()
-	// 注意:这里有个for loop 现在的select 收到 work1的通信也不会停止会一直循环接收
-	for {
-		select {
-		case n := <-c1:
-			fmt.Println(n)
-		case n := <-c2:
-			fmt.Println(n)
-			//default:
-			//	fmt.Println("no value received")
-		}
+
+	select {
+	case n := <-c1:
+		fmt.Println(n)
+	case n := <-c2:
+		fmt.Println(n)
+		//default:
+		//	fmt.Println("no value received")
 	}
 
 }
