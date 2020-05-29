@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"math/rand"
-	"strconv"
 	"time"
 )
 
@@ -41,14 +40,21 @@ func main() {
 	var c1 = generator()
 	var c2 = generator()
 	w1 := createWork1()
+	n := 0
+	hasVale := false
 
 	for {
-
+		var activeWorker chan<- interface{}
+		if hasVale {
+			activeWorker = w1
+		}
 		select {
-		case n := <-c1:
-			w1 <- strconv.Itoa(n) + "-c1"
-		case n := <-c2:
-			w1 <- strconv.Itoa(n) + "-c2"
+		case n = <-c1:
+			hasVale = true
+		case n = <-c2:
+			hasVale = true
+		case activeWorker <- n:
+			hasVale = false
 		}
 	}
 }
