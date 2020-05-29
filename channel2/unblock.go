@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
-func work1() chan int {
+// generator
+func generator() chan int {
 	c := make(chan int)
 	go func() {
 		i := 0
@@ -14,36 +16,39 @@ func work1() chan int {
 			i++
 			time.Sleep(time.Duration(rand.Intn(1500)) * time.Millisecond)
 			// 这样当select 收到通信的时候就终止了goroutine
-			if i == 20 {
-				c <- i
-			}
 			fmt.Println(i)
+			c <- i
+
 		}
 	}()
 	return c
 }
 
+func work1(w chan interface{}) {
+	for n := range w {
+		fmt.Printf("receive value via channel id: vale =%v \n", n)
+	}
+}
+
+// consumer
+func createWork1() chan interface{} {
+	w := make(chan interface{})
+	go work1(w)
+	return w
+}
+
 func main() {
-	var c1 = make(chan interface{})
-	close(c1)
-	var c2 = make(chan interface{})
-	close(c2)
-	var c3 = make(chan interface{})
-	close(c3)
-	var c1Count, c2Count, c3Count int
-	for i := 10000000; i >= 0; i-- {
+	var c1 = generator()
+	var c2 = generator()
+	w1 := createWork1()
+
+	for {
 
 		select {
-		case <-c1:
-			c1Count++
-		case <-c2:
-			c2Count++
-		case <-c3:
-			c3Count++
-			//default:
-			//	fmt.Println("no value received")
+		case n := <-c1:
+			w1 <- strconv.Itoa(n) + "-c1"
+		case n := <-c2:
+			w1 <- strconv.Itoa(n) + "-c2"
 		}
-
 	}
-	fmt.Printf("c1=%v, c2=%v c3=%v", c1Count, c2Count, c3Count)
 }
