@@ -11,6 +11,10 @@ func getRetriever() testing.Retriever {
 
 func main() {
 	// 一个测试团队,需要测试这个方法,但是改动的地方太多了,很不满意
-	var retrieve testing.Retriever = getRetriever()
+	// 这里对于动态语言解耦已经完成了,但对于静态语言(强类型语言)这里还需要其他操作
+
+	// 这里需要让我们的代码和逻辑一致
+	// 这里需要一个something ? 可以 Get
+	var retrieve ? = getRetriever()
 	fmt.Println(retrieve.Get("https://www.baidu.com"))
 }
