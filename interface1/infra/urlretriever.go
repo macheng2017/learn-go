@@ -6,10 +6,10 @@ import (
 	"net/http"
 )
 
-type Retrieve struct {
+type Retriever struct {
 }
 
-func (Retrieve) Get(url string) string {
+func (Retriever) Get(url string) string {
 	resp, err := http.Get(url)
 	if err != nil {
 		fmt.Println(err)
