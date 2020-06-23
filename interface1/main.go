@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"learngo/interface1/testing"
+	"learngo/interface1/infra"
 )
 
 func getRetriever() retriever {
-	return testing.Retriever{}
+	return infra.Retriever{}
 }
 
 // 这里需要让我们的代码和逻辑一致
