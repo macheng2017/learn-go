@@ -10,7 +10,7 @@ func getRetriever() infra.Retrieve {
 }
 
 func main() {
-	// 这样看着比较像函数
-	retrieve := getRetriever()
+	// 把retriever 的类型现式的写出来
+	var retrieve infra.Retrieve = getRetriever()
 	fmt.Println(retrieve.Get("https://www.baidu.com"))
 }
